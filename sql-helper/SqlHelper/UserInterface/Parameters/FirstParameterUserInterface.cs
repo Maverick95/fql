@@ -2,6 +2,7 @@
 using SqlHelper.Helpers;
 using SqlHelper.Models;
 using System.Text.RegularExpressions;
+using SqlHelper.Extensions;
 
 namespace SqlHelper.UserInterface.Parameters
 {
@@ -21,16 +22,10 @@ namespace SqlHelper.UserInterface.Parameters
             _stream = stream;
         }
 
-        private string Clean(string input)
-        {
-            var input_transformed = input.Trim().ToLowerInvariant();
-            var rgx_whitespace = new Regex("\\s+");
-            return rgx_whitespace.Replace(input_transformed, " ");
-        }
-
+        #region Help command
         private HandlerResult Handler_Help(string input)
         {
-            var cleaned = Clean(input);
+            var cleaned = input.Clean();
             var help_commands = new string[] { "h", "help" };
 
             if (help_commands.Contains(cleaned))
@@ -42,20 +37,24 @@ namespace SqlHelper.UserInterface.Parameters
 
             return HandlerResult.NEXT_HANDLER;
         }
+        #endregion
 
+        #region Finish command
         private HandlerResult Handler_Finish(string input)
         {
-            var cleaned = Clean(input);
+            var cleaned = input.Clean();
             var execute_commands = new string[] { "e", "exec", "execute" };
 
             return execute_commands.Contains(cleaned) ? HandlerResult.FINISH : HandlerResult.NEXT_HANDLER;
         }
+        #endregion
 
+        #region Add Filters command
         private HandlerResult Handler_AddFilters(string input, DbData data, SqlQueryParameters parameters)
         {
             const int padding = 3;
 
-            var cleaned = Clean(input);
+            var cleaned = input.Clean();
             var rgx_filter = new Regex("^(f|filter) ");
             var match = rgx_filter.Match(cleaned);
 
@@ -147,7 +146,7 @@ namespace SqlHelper.UserInterface.Parameters
                 _stream.Write(option.Text);
             }
 
-            cleaned = Clean(_stream.Read());
+            cleaned = _stream.Read().Clean();
             _stream.Padding();
 
             var selected = cleaned
@@ -175,10 +174,14 @@ namespace SqlHelper.UserInterface.Parameters
 
             return HandlerResult.NEXT_COMMAND;
         }
+        #endregion
 
+        #region Add Tables command
         private HandlerResult Handler_AddTables(string input, DbData data, SqlQueryParameters parameters)
         {
-            var cleaned = Clean(input);
+            const int padding = 3;
+
+            var cleaned = input.Clean();
             var rgx_table = new Regex("^(t|table) ");
             var match = rgx_table.Match(cleaned);
 
@@ -218,14 +221,34 @@ namespace SqlHelper.UserInterface.Parameters
                 return HandlerResult.NEXT_COMMAND;
             }
 
-            var id_length = matches.Count().ToString().Length + 1;
+            var id_space = matches.Count().ToString().Length + padding;
             var ids = Enumerable.Range(1, matches.Count());
 
-            var options = ids.Zip(matches, (id, match) => new
+            var options_data = matches
+                .Select(match => match.Value)
+                .OrderBy(table =>
+                {
+                    (
+                        string table,
+                        string schema
+                    ) order =
+                    (
+                        table.Name,
+                        table.Schema
+                    );
+                    return order;
+                });
+
+            var schema_max_length =
+                options_data.Max(data => data.Schema.Length);
+
+            var schema_space = schema_max_length + padding + 1; // Extra space for the . separator
+
+            var options = ids.Zip(options_data, (id, option) => new
             {
                 Id = id,
-                Table = match.Value,
-                Text = $"{id}".PadRight(id_length) + match.Value.Name,
+                Table = option,
+                Text = $"{id}".PadRight(id_space) + $"{option.Schema}.".PadRight(schema_space) + option.Name,
             });
 
             _stream.Write("Enter comma-separated options, for example, to select options 1 and 2, enter '1,2' or '1, 2'");
@@ -234,7 +257,7 @@ namespace SqlHelper.UserInterface.Parameters
                 _stream.Write(option.Text);
             }
 
-            cleaned = Clean(_stream.Read());
+            cleaned = _stream.Read().Clean();
             _stream.Padding();
 
             var selected = cleaned
@@ -258,6 +281,7 @@ namespace SqlHelper.UserInterface.Parameters
 
             return HandlerResult.NEXT_COMMAND;
         }
+        #endregion
 
         public SqlQueryParameters GetParameters(DbData data)
         {

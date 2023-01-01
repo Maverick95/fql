@@ -20,7 +20,7 @@ namespace SqlHelper.UserInterface.Path
             var names_start = results.SelectMany(
                 result => new List<string>
                 {
-                    result.Start.Schema,
+                    $"{result.Start.Schema}.",
                     result.Start.Name,
                 });
 
@@ -28,7 +28,7 @@ namespace SqlHelper.UserInterface.Path
                 result => result.Paths.SelectMany(
                     path => new List<string>
                     {
-                        path.Table.Schema,
+                        $"{path.Table.Schema}.",
                         path.Table.Name,
                     }));
 
@@ -58,7 +58,7 @@ namespace SqlHelper.UserInterface.Path
                     .Select(path => path.Table.Schema)
                     .ToList()
                     .Prepend(d.Result.Start.Schema)
-                    .Select(schema => schema.PadRight(name_space))
+                    .Select(schema => $"{schema}.".PadRight(name_space))
                     .Sentence(" -> ");
 
                 _stream.Write(schemas);
@@ -69,7 +69,7 @@ namespace SqlHelper.UserInterface.Path
                     .ToList()
                     .Prepend(d.Result.Start.Name)
                     .Select(table => table.PadRight(name_space))
-                    .Sentence(" -> ");
+                    .Sentence("    ");
 
                 _stream.Write(tables);
 
