@@ -53,6 +53,8 @@ namespace SqlHelper.UserInterface.Parameters
 
         private HandlerResult Handler_AddFilters(string input, DbData data, SqlQueryParameters parameters)
         {
+            const int padding = 3;
+
             var cleaned = Clean(input);
             var rgx_filter = new Regex("^(f|filter) ");
             var match = rgx_filter.Match(cleaned);
@@ -94,18 +96,49 @@ namespace SqlHelper.UserInterface.Parameters
                 return HandlerResult.NEXT_COMMAND;
             }
 
-            var id_length = matches.Count().ToString().Length + 1;
+            var options_data = matches
+                .Select(match => new
+                {
+                    Table = data.Tables[match.Key.TableId],
+                    Column = match.Value,
+                })
+                .OrderBy(data =>
+                {
+                    (
+                        string column,
+                        string schema,
+                        string table
+                    ) order =
+                    (
+                        data.Column.Name,
+                        data.Table.Schema,
+                        data.Table.Name
+                    );
+
+                    return order;
+                });
+
+            var schema_max_length =
+                options_data.Max(data => data.Table.Schema.Length);
+
+            var table_max_length =
+                options_data.Max(data => data.Table.Name.Length);
+
+            var schema_space = schema_max_length + padding + 1; // Extra space for the . separator
+            var table_space = table_max_length + padding + 1; // Extra space for the . separator
+
+            var id_space = matches.Count().ToString().Length + padding;
             var ids = Enumerable.Range(1, matches.Count());
 
-            var options = ids.Zip(matches, (id, match) =>
+            var options = ids.Zip(options_data, (id, option) => new
             {
-                var table = data.Tables[match.Key.TableId];
-                return new
-                {
-                    Id = id,
-                    Column = match.Value,
-                    Text = $"{id}".PadRight(id_length) + $"[{table.Schema}].[{table.Name}].[{match.Value.Name}]",
-                };
+                Id = id,
+                Column = option.Column,
+                Text =
+                    $"{id}".PadRight(id_space) +
+                    $"{option.Table.Schema}.".PadRight(schema_space) +
+                    $"{option.Table.Name}.".PadRight(table_space) +
+                    $"{option.Column.Name}",
             });
 
             _stream.Write("Enter comma-separated options, for example, to select options 1 and 2, enter '1,2' or '1, 2'");
