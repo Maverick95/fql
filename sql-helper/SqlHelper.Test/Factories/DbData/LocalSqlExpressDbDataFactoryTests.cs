@@ -6,9 +6,9 @@ using SqlHelper.Helpers;
 using SqlHelper.Models;
 using SqlHelper.Factories.DbData;
 
-namespace SqlHelper.Test.SqlHelper.GraphFactories
+namespace SqlHelper.Test.Factories.DbData
 {
-    public class LocalSqlExpressGraphFactoryTests
+    public class LocalSqlExpressDbDataFactoryTests
     {
         [Fact]
         public void Create_ShouldConstructGraphModel()
@@ -51,7 +51,7 @@ namespace SqlHelper.Test.SqlHelper.GraphFactories
 
             var actualGraphFactory = new LocalSqlExpressDbDataFactory("test_database", mockConnectionFactory, mockCommandFactory);
 
-            var expected = new DbData
+            var expected = new Models.DbData
             {
                 Tables = new SortedDictionary<long, Table>
                 {
@@ -75,7 +75,7 @@ namespace SqlHelper.Test.SqlHelper.GraphFactories
                         Id = 1,
                         TargetTableId = 2,
                         SourceTableId = 1,
-                        Columns = new List<Models.ConstraintColumnPair>
+                        Columns = new List<ConstraintColumnPair>
                         {
                             new()
                             {
@@ -89,7 +89,7 @@ namespace SqlHelper.Test.SqlHelper.GraphFactories
                         Id = 2,
                         TargetTableId = 3,
                         SourceTableId = 2,
-                        Columns = new List<Models.ConstraintColumnPair>
+                        Columns = new List<ConstraintColumnPair>
                         {
                             new()
                             {
@@ -149,7 +149,7 @@ namespace SqlHelper.Test.SqlHelper.GraphFactories
 
             var actualGraphFactory = new LocalSqlExpressDbDataFactory("test_database", mockConnectionFactory, mockCommandFactory);
 
-            var expected = new DbData
+            var expected = new Models.DbData
             {
                 Tables = new SortedDictionary<long, Table>
                 {
@@ -175,7 +175,7 @@ namespace SqlHelper.Test.SqlHelper.GraphFactories
                         Id = 1,
                         TargetTableId = 2,
                         SourceTableId = 1,
-                        Columns = new List<Models.ConstraintColumnPair>
+                        Columns = new List<ConstraintColumnPair>
                         {
                             new()
                             {
@@ -189,7 +189,7 @@ namespace SqlHelper.Test.SqlHelper.GraphFactories
                         Id = 2,
                         TargetTableId = 3,
                         SourceTableId = 2,
-                        Columns = new List<Models.ConstraintColumnPair>
+                        Columns = new List<ConstraintColumnPair>
                         {
                             new()
                             {
