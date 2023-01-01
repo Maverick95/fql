@@ -36,6 +36,7 @@ namespace SqlHelper.UserInterface.Parameters
             if (help_commands.Contains(cleaned))
             {
                 _stream.Write("TODO : write help instructions lol rofl");
+                _stream.Padding();
                 return HandlerResult.NEXT_COMMAND;
             }
 
@@ -73,6 +74,7 @@ namespace SqlHelper.UserInterface.Parameters
             if (matches.Any() == false)
             {
                 _stream.Write("filter command contains no matches, please try again");
+                _stream.Padding();
                 return HandlerResult.NEXT_COMMAND;
             }
 
@@ -83,6 +85,7 @@ namespace SqlHelper.UserInterface.Parameters
                 var filter_output = $"[{table.Schema}].[{table.Name}].[{filter.Name}]";
 
                 _stream.Write($"Adding 1 filters to the selection ({filter_output})");
+                _stream.Padding();
 
                 parameters.Filters = parameters.Filters
                     .UnionBy(new List<Column> { filter }, (filter) => (filter.TableId, filter.ColumnId))
@@ -112,6 +115,7 @@ namespace SqlHelper.UserInterface.Parameters
             }
 
             cleaned = Clean(_stream.Read());
+            _stream.Padding();
 
             var selected = cleaned
                 .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
@@ -130,6 +134,7 @@ namespace SqlHelper.UserInterface.Parameters
                 .Sentence(", ", "none found");
 
             _stream.Write($"Adding {selected.Count()} columns to the selection ({selected_output})");
+            _stream.Padding();
 
             parameters.Filters = parameters.Filters
                 .UnionBy(selected, (filter) => (filter.TableId, filter.ColumnId))
@@ -161,6 +166,7 @@ namespace SqlHelper.UserInterface.Parameters
             if (matches.Any() == false)
             {
                 _stream.Write("table command contains no matches, please try again");
+                _stream.Padding();
                 return HandlerResult.NEXT_COMMAND;
             }
 
@@ -170,6 +176,7 @@ namespace SqlHelper.UserInterface.Parameters
                 var table_output = $"[{table.Schema}].[{table.Name}]";
 
                 _stream.Write($"Adding 1 tables to the selection ({table_output})");
+                _stream.Padding();
 
                 parameters.Tables = parameters.Tables
                     .UnionBy(new List<Table> { table }, (table) => table.Id)
@@ -195,6 +202,7 @@ namespace SqlHelper.UserInterface.Parameters
             }
 
             cleaned = Clean(_stream.Read());
+            _stream.Padding();
 
             var selected = cleaned
                 .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
@@ -209,6 +217,7 @@ namespace SqlHelper.UserInterface.Parameters
                 .Sentence(", ", "none found");
 
             _stream.Write($"Adding {selected.Count()} tables to the selection ({selected_output})");
+            _stream.Padding();
 
             parameters.Tables = parameters.Tables
                 .UnionBy(selected, (table) => table.Id)
@@ -239,6 +248,7 @@ namespace SqlHelper.UserInterface.Parameters
             {
                 _stream.Write("Enter command (type 'h' or 'help' for options) :");
                 var input = _stream.Read();
+                _stream.Padding();
                 var handled = false;
                 
                 foreach (var handler in handlers)
@@ -255,6 +265,7 @@ namespace SqlHelper.UserInterface.Parameters
                 if (handled == false)
                 {
                     _stream.Write("Command not found, please try again");
+                    _stream.Padding();
                 }
             }
 

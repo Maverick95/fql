@@ -143,9 +143,4 @@ Do table / filter names match the whole table or just part?
 TODO : should you have handler methods return a new SqlQueryParameters instead of altering the input?
 TBH probably.
 
-Choosing the path instead of just taking the first available.
-This will have to be a different user interface than the first, because key functionality
-separates the two.
-
-
-
+Add some new lines to the output.
