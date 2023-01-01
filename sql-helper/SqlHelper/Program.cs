@@ -62,7 +62,7 @@ namespace SqlHelper
 
         static void Main(string[] args)
         {
-            IDbDataFactory dbDataFactory = new LocalSqlExpressDbDataFactory("test_db");
+            IDbDataFactory dbDataFactory = new LocalSqlExpressDbDataFactory(args[0]);
 
             IPathFinder pathFinder = new FirstStupidPathFinder();
 
