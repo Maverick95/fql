@@ -21,26 +21,43 @@ namespace SqlHelper.Factories.SqlQuery
 
         public string Generate(Models.DbData data, SqlHelperResult result, SqlQueryParameters parameters)
         {
-            var tables = result.Paths.Select(p => p.Table).ToList();
-            tables.Add(result.Start);
-            var tableAliases = _tableAliasFactory.Create(tables);
+            var all_tables = result.Paths
+                .Select(p => p.Table)
+                .Prepend(result.Start);
+            var all_aliases = _tableAliasFactory.Create(all_tables).AppendIndex();
+            
+            var all_data = all_tables
+                .Zip(all_aliases, (table, alias) => new
+                {
+                    Table = table,
+                    Alias = alias,
+                });
+
+            var source_aliases = all_aliases.Skip(1);
+            var target_aliases = all_aliases.SkipLast(1);
+            
+            var path_aliases = source_aliases.Zip(
+                target_aliases, (source, target) => new
+                {
+                    Source = source,
+                    Target = target,
+                });
 
             /*
                 SELECT 
                 [ALIAS_1].*, [ALIAS_2].*, ...
              */
-            var select = parameters.Tables
-                .Select(table => table.Id)
-                .Select(id => tableAliases[id])
-                .Select(alias => $"[{alias}].*")
+            var select = all_data
+                .Where(data => parameters.Tables.Any(
+                    table => table.Id == data.Table.Id))
+                .Select(data => $"[{data.Alias}].*")
                 .Sentence(", ", "*");
 
             /*
                 FROM
                 [SCHEMA].[TABLE] [ALIAS]
              */
-            var from_alias = tableAliases[result.Start.Id];
-
+            var from_alias = all_aliases.First();
             var from = string.Format("[{0}].[{1}] [{2}]",
                 result.Start.Schema,
                 result.Start.Name,
@@ -54,15 +71,12 @@ namespace SqlHelper.Factories.SqlQuery
                 INNER JOIN ...
              */
             var joins_data = result.Paths
-                .Select(path =>
+                .Zip(path_aliases, (path, alias) =>
                 {
-                    var alias_source = tableAliases[path.Constraint.SourceTableId];
-                    var alias_target = tableAliases[path.Constraint.TargetTableId];
-
                     var source = string.Format("[{0}].[{1}] [{2}]",
                         path.Table.Schema,
                         path.Table.Name,
-                        alias_source);
+                        alias.Source);
 
                     var columns_source = path.Constraint.Columns
                         .Select(columns => (path.Constraint.SourceTableId, columns.SourceColumnId))
@@ -74,9 +88,9 @@ namespace SqlHelper.Factories.SqlQuery
 
                     var columns = columns_source.Zip(columns_target, (column_source, column_target) => string.Format(
                             "[{0}].[{1}] = [{2}].[{3}]",
-                            alias_source,
+                            alias.Source,
                             column_source,
-                            alias_target,
+                            alias.Target,
                             column_target))
                         .Sentence(" AND ");
 
@@ -94,20 +108,20 @@ namespace SqlHelper.Factories.SqlQuery
                 [ALIAS_2].[FILTER_COLUMN_2] = DEFAULT_TYPE_VALUE_2
                 ...
             */
-            var where_data = parameters.Filters.Select(filter =>
-            {
-                var alias = tableAliases[filter.TableId];
-                var column = data.Columns[(filter.TableId, filter.ColumnId)];
-
-                var default_value = _defaultTypeValueFactory.Create(column.Type);
-
-                var where = string.Format("[{0}].[{1}] = {2}",
-                    alias,
-                    column.Name,
-                    default_value);
-
-                return where;
-            });
+            var where_data = parameters.Filters
+                .Join(
+                    all_data,
+                    filter => filter.TableId,
+                    data => data.Table.Id,
+                    (filter, data) =>
+                    {
+                        var default_value = _defaultTypeValueFactory.Create(filter.Type);
+                        var where = string.Format("[{0}].[{1}] = {2}",
+                            data.Alias,
+                            filter.Name,
+                            default_value);
+                        return where;
+                    });
 
             var where = where_data.Any() ?
                 $"WHERE {where_data.Sentence(" AND ")}" :

@@ -67,7 +67,7 @@ namespace SqlHelper
             IPathFinder pathFinder = new FirstStupidPathFinder();
 
             ISqlQueryFactory sqlQueryFactory = new FirstSqlQueryFactory(
-                new ShortestTableAliasFactory(),
+                new FullyQualifiedTableAliasFactory(),
                 new FirstDefaultTypeValueFactory()
             );
 

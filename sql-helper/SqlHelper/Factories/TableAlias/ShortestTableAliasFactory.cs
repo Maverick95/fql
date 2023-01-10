@@ -4,15 +4,11 @@ namespace SqlHelper.Factories.TableAlias
 {
     public class ShortestTableAliasFactory: ITableAliasFactory
     {
-        /*
-         * ARG encountered bug!
-         * You are allowed the same table multiple times in a query.
-         * So aliases can't just be a dictionary of ids and aliases.
-         * The same table can require different aliases.
-         */
-
-        public SortedDictionary<long, string> Create(IEnumerable<Table> tables)
+        public IEnumerable<string> Create(IEnumerable<Table> tables)
         {
+            // Comment this out until we can fix it up proper.
+
+            /*
             var unique_tables = tables
                 .DistinctBy(table => table.Id)
                 .ToList();
@@ -30,12 +26,12 @@ namespace SqlHelper.Factories.TableAlias
                     .Where(t => results.ContainsKey(t.Id) == false)
                     .Select(t =>
                     {
-                        /* 
-                         * This fixes a bug AND solves an edge case at the same time.
-                         * If I had table names "USER" and "USERAPPLICATION",
-                         * I would expect "USER" to be an alias for 1st table,
-                         * and "USERA" to be an alias for 2nd table.
-                         */
+                        
+                        // This fixes a bug AND solves an edge case at the same time.
+                        // If I had table names "USER" and "USERAPPLICATION",
+                        // I would expect "USER" to be an alias for 1st table,
+                        // and "USERA" to be an alias for 2nd table.
+                         
                         var alias_substr_length = Math.Min(t.Name.Length, current_substr_length);
                         return new
                         {
@@ -84,6 +80,9 @@ namespace SqlHelper.Factories.TableAlias
             } while (finished == false);
 
             return results;
+            */
+
+            return null;
         }
     }
 }

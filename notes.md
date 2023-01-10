@@ -114,8 +114,6 @@ What next?
 
 Required -
 
-Choosing the path instead of just taking the first available.
-
 Saving as file config (larger problem), specifically, viewing suggestions based on identical field names / types.
 This is becoming more of a need than an ideal.
 
@@ -127,15 +125,8 @@ Better formatting for SQL output.
 More efficient / neater table aliases.
 
 
-
-How to build up the tables / views.
-The whole aim of this is to reduce input from the user.
-
 I think you have four commands to start off with.
-a) Add table DONE
-b) Add filter DONE
 c) Reset
-d) Execute DONE
 e) Status
 
 Do table / filter names match the whole table or just part?
@@ -143,4 +134,28 @@ Do table / filter names match the whole table or just part?
 TODO : should you have handler methods return a new SqlQueryParameters instead of altering the input?
 TBH probably.
 
-Add some new lines to the output.
+BUG to look at - table alises can contain the same table twice.
+I think I've got the best solution to this.
+It's both the easiest solution and prevents the problem from existing.
+Solution is to add a suffix to every table alias, _X, where X is the index
+of the table within the solution path.
+So regardless of whether a table is a duplicate or not, it has this suffix.
+But this stops any alias from being used twice, without over-complicating things.
+
+It means you have to do a bit more work in the Sql Query generator though.
+
+Right so upon further investigation it seems this is more diffcult than you thought.
+Duplicate tables exist in the Table and Filter parts of query parameters.
+
+So for now fix this by not allowing duplicates in the path finder.
+
+Remember, it's best to keep this dumb.
+
+I like the idea you had before, if you pass in a list to the table alias generator,
+you get back a list to zip it with.
+
+
+
+Weird result you get, if you select Subscription, filter on ApplicationName AND VendorName,
+you get no choice of path, and you should get 2?
+
