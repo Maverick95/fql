@@ -3,6 +3,7 @@ using SqlHelper.Factories.DefaultTypeValue;
 using SqlHelper.Factories.SqlQuery;
 using SqlHelper.Factories.TableAlias;
 using SqlHelper.Helpers;
+using SqlHelper.Output;
 using SqlHelper.Paths;
 using SqlHelper.UserInterface.Parameters;
 using SqlHelper.UserInterface.Path;
@@ -18,19 +19,22 @@ namespace SqlHelper
             private readonly ISqlQueryFactory _sqlQueryFactory;
             private readonly IParameterUserInterface _parameterUserInterface;
             private readonly IPathUserInterface _pathUserInterface;
+            private readonly IOutputHandler _outputHandler;
 
             public Solution(
                 IDbDataFactory dbDataFactory,
                 IPathFinder pathFinder,
                 ISqlQueryFactory sqlQueryFactory,
                 IParameterUserInterface parameterUserInterface,
-                IPathUserInterface pathUserInterface)
+                IPathUserInterface pathUserInterface,
+                IOutputHandler outputHandler)
             {
                 _dbDataFactory = dbDataFactory;
                 _pathFinder = pathFinder;
                 _sqlQueryFactory = sqlQueryFactory;
                 _parameterUserInterface = parameterUserInterface;
                 _pathUserInterface = pathUserInterface;
+                _outputHandler = outputHandler;
             }
 
             public void Solve()
@@ -56,7 +60,7 @@ namespace SqlHelper
                     _pathUserInterface.Choose(paths);
                 
                 var output = _sqlQueryFactory.Generate(data, path, parameters);
-                Console.Write(output);
+                _outputHandler.Handle(output);
             }
         }
 
@@ -75,12 +79,15 @@ namespace SqlHelper
 
             IPathUserInterface pathUserInterface = new ChoosePathUserInterface(new ConsoleStream());
 
+            IOutputHandler outputHandler = new PrintToConsoleOutputHandler(new ConsoleStream());
+
             var solution = new Solution(
                 dbDataFactory,
                 pathFinder,
                 sqlQueryFactory,
                 parameterUserInterface,
-                pathUserInterface);
+                pathUserInterface,
+                outputHandler);
 
             solution.Solve();
         }
