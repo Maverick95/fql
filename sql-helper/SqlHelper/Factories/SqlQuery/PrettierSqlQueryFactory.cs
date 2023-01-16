@@ -189,7 +189,7 @@ namespace SqlHelper.Factories.SqlQuery
                 .Concat(where)
                 .Sentence("\n");
 
-            return output;
+            return output + ";";
         }
     }
 }
