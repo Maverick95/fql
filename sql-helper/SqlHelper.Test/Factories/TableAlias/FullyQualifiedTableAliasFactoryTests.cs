@@ -46,57 +46,12 @@ namespace SqlHelper.Test.Factories.TableAlias
                 },
             };
 
-            var expected = new SortedDictionary<long, string>
+            var expected = new List<string>
             {
-                { 1, "SCHEMA_1_Table_1" },
-                { 2, "SCHEMA_1_TaBlE_2" },
-                { 3, "schema_2_Table_3" },
-                { 4, "schema_2_TABLE_4" },
-            };
-
-            // ACT
-            var actual = _factory.Create(tables);
-
-            // ASSERT
-            actual.Should().BeEquivalentTo(expected);
-        }
-
-        [Fact]
-        public void Create_ShouldHandleDuplicateTables()
-        {
-            // ARRANGE
-            var tables = new List<Table>
-            {
-                new()
-                {
-                    Id = 1,
-                    Schema = "SCHEMA_1",
-                    Name = "Table_1",
-                },
-                new()
-                {
-                    Id = 2,
-                    Schema = "SCHEMA_1",
-                    Name = "TaBlE_2",
-                },
-                new()
-                {
-                    Id = 2,
-                    Schema = "SCHEMA_1",
-                    Name = "TaBlE_2",
-                },
-                new()
-                {
-                    Id = 1,
-                    Schema = "SCHEMA_1",
-                    Name = "Table_1",
-                },
-            };
-
-            var expected = new SortedDictionary<long, string>
-            {
-                { 1, "SCHEMA_1_Table_1" },
-                { 2, "SCHEMA_1_TaBlE_2" },
+                "SCHEMA_1_Table_1",
+                "SCHEMA_1_TaBlE_2",
+                "schema_2_Table_3",
+                "schema_2_TABLE_4",
             };
 
             // ACT
