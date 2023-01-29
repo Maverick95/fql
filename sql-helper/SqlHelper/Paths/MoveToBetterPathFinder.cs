@@ -1,4 +1,5 @@
 ﻿using SqlHelper.Models;
+using SqlHelper.Helpers;
 
 namespace SqlHelper.Paths
 {
@@ -112,8 +113,41 @@ namespace SqlHelper.Paths
                     tableId: tr);
             }
 
-            // This is really wrong for now but compiles so hey.
-            return results;
+            // Generate the iterator to use these connections.
+            var count = results.Count;
+            // If there are N tables, a valid result must contain at least N - 1 paths between tables.
+            var choose = tablesRequired.Count() - 1;
+            var iterator = IListChooseElementIterator.GetEnumerable(count, choose);
+
+            var nSolutions = 0;
+
+            foreach(var indices in iterator)
+            {
+                var paths = indices
+                    .Select(i => results[i]);
+
+                var sourceTables = paths
+                    .Select(p => p.Paths.Last().Table.Id);
+
+                // Valid results contain 0 or 1 tables that are NOT listed as a source.
+                var parentTableCount = tablesRequired
+                    .GroupJoin(
+                        sourceTables,
+                        id => id, id => id,
+                        (id, tables) => tables.Any()
+                    )
+                    .Count(any => any == false);
+
+                if (parentTableCount < 2)
+                {
+                    // This is really wrong for now.
+                    //return paths.ToList();
+                    Console.WriteLine($"Solution number {++nSolutions}");
+                }
+            }
+
+            // This is really wrong for now.
+            return null;
         }
     }
 }
