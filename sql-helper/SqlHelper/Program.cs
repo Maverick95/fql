@@ -15,18 +15,18 @@ namespace SqlHelper
         private class Solution
         {
             private readonly IDbDataFactory _dbDataFactory;
-            private readonly IPathFinder _pathFinder;
-            private readonly ISqlQueryFactory _sqlQueryFactory;
+            private readonly IPathFinderVersionTree _pathFinder;
+            private readonly ISqlQueryFactoryVersionTree _sqlQueryFactory;
             private readonly IParameterUserInterface _parameterUserInterface;
-            private readonly IPathUserInterface _pathUserInterface;
+            private readonly IPathUserInterfaceVersionTree _pathUserInterface;
             private readonly IOutputHandler _outputHandler;
 
             public Solution(
                 IDbDataFactory dbDataFactory,
-                IPathFinder pathFinder,
-                ISqlQueryFactory sqlQueryFactory,
+                IPathFinderVersionTree pathFinder,
+                ISqlQueryFactoryVersionTree sqlQueryFactory,
                 IParameterUserInterface parameterUserInterface,
-                IPathUserInterface pathUserInterface,
+                IPathUserInterfaceVersionTree pathUserInterface,
                 IOutputHandler outputHandler)
             {
                 _dbDataFactory = dbDataFactory;
@@ -68,16 +68,16 @@ namespace SqlHelper
         {
             IDbDataFactory dbDataFactory = new LocalSqlExpressDbDataFactory(args[0]);
 
-            IPathFinder pathFinder = new FirstStupidPathFinder();
+            IPathFinderVersionTree pathFinder = new FirstStupidPathFinderVersionTree();
 
-            ISqlQueryFactory sqlQueryFactory = new PrettierSqlQueryFactory(
+            ISqlQueryFactoryVersionTree sqlQueryFactory = new PrettierSqlQueryFactoryVersionTree(
                 new FullyQualifiedTableAliasFactory(),
                 new FirstDefaultTypeValueFactory(),
                 5);
 
             IParameterUserInterface parameterUserInterface = new FirstParameterUserInterface(new ConsoleStream());
 
-            IPathUserInterface pathUserInterface = new ChoosePathUserInterface(new ConsoleStream());
+            IPathUserInterfaceVersionTree pathUserInterface = new ChoosePathUserInterfaceVersionTree(new ConsoleStream());
 
             IOutputHandler outputHandler = new PrintToConsoleOutputHandler(new ConsoleStream());
 
