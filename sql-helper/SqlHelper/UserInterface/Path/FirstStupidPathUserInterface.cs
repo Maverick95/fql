@@ -6,7 +6,7 @@ namespace SqlHelper.UserInterface.Path
 
     public class FirstStupidPathUserInterface: IPathUserInterface
     {
-        public SqlHelperResult Choose(IList<SqlHelperResult> paths)
+        public ResultRoute Choose(IList<ResultRoute> paths)
         {
             return paths.First();
         }

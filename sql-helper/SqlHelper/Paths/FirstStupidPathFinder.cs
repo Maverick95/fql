@@ -26,7 +26,7 @@ namespace SqlHelper.Paths
             Dictionary<long, List<long>> constraintsByTargetTable,
             Stack<Table> tablesPath,
             Stack<Constraint> constraintsPath,
-            IList<SqlHelperResult> results,
+            IList<ResultRoute> results,
             long tableId)
         {
             if (tablesFound.ContainsKey(tableId))
@@ -51,13 +51,13 @@ namespace SqlHelper.Paths
                 var constraints = constraintsPath.Reverse();
 
                 results.Add(
-                    new SqlHelperResult
+                    new ResultRoute
                     {
                         Start = start,
-                        Paths = tables.Zip(constraints, (table, constraint) => new SqlHelperResultPath
+                        Route = tables.Zip(constraints, (table, constraint) =>
                         {
-                            Table = table,
-                            Constraint = constraint,
+                            (Table source, Constraint constraint) link = (table, constraint);
+                            return link;
                         }).ToList(),
                     });
             }
@@ -98,7 +98,7 @@ namespace SqlHelper.Paths
             tablesPath.Pop();
         }
 
-        public IList<SqlHelperResult> Help(DbData graph, IList<long> tables)
+        public IList<ResultRoute> Help(DbData graph, IList<long> tables)
         {
             var tablesRequired = tables.Distinct();
 
@@ -117,7 +117,7 @@ namespace SqlHelper.Paths
             var tablesPath = new Stack<Table>();
             var constraintsPath = new Stack<Constraint>();
 
-            var results = new List<SqlHelperResult>();
+            var results = new List<ResultRoute>();
 
             foreach (var tr in tablesRequired)
             {

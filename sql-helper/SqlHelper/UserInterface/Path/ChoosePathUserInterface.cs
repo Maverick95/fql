@@ -13,7 +13,7 @@ namespace SqlHelper.UserInterface.Path
             _stream = stream;
         }
 
-        SqlHelperResult IPathUserInterface.Choose(IList<SqlHelperResult> results)
+        ResultRoute IPathUserInterface.Choose(IList<ResultRoute> results)
         {
             const int padding = 3;
 
@@ -25,11 +25,11 @@ namespace SqlHelper.UserInterface.Path
                 });
 
             var names_paths = results.SelectMany(
-                result => result.Paths.SelectMany(
+                result => result.Route.SelectMany(
                     path => new List<string>
                     {
-                        $"{path.Table.Schema}.",
-                        path.Table.Name,
+                        $"{path.source.Schema}.",
+                        path.source.Name,
                     }));
 
             var max_name_length = names_start
@@ -54,8 +54,8 @@ namespace SqlHelper.UserInterface.Path
                 _stream.Write(d.Id.ToString());
 
                 // Schemas
-                var schemas = d.Result.Paths
-                    .Select(path => path.Table.Schema)
+                var schemas = d.Result.Route
+                    .Select(path => path.source.Schema)
                     .ToList()
                     .Prepend(d.Result.Start.Schema)
                     .Select(schema => $"{schema}.".PadRight(name_space))
@@ -64,8 +64,8 @@ namespace SqlHelper.UserInterface.Path
                 _stream.Write(schemas);
 
                 // Tables
-                var tables = d.Result.Paths
-                    .Select(path => path.Table.Name)
+                var tables = d.Result.Route
+                    .Select(path => path.source.Name)
                     .ToList()
                     .Prepend(d.Result.Start.Name)
                     .Select(table => table.PadRight(name_space))
@@ -76,7 +76,7 @@ namespace SqlHelper.UserInterface.Path
                 _stream.Write(string.Empty);
             }
 
-            SqlHelperResult chosen_result = null;
+            ResultRoute chosen_result = null;
             while (chosen_result is null)
             {
                 var input = _stream.Read();
@@ -86,7 +86,7 @@ namespace SqlHelper.UserInterface.Path
                 chosen_result = data
                     .Where(d => d.Id == id)
                     .Select(d => d.Result)
-                    .FirstOrDefault((SqlHelperResult)null);
+                    .FirstOrDefault((ResultRoute)null);
             }
 
             return chosen_result;

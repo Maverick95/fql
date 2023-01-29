@@ -19,10 +19,10 @@ namespace SqlHelper.Factories.SqlQuery
             _defaultTypeValueFactory = defaultTypeValueFactory;
         }
 
-        public string Generate(Models.DbData data, SqlHelperResult result, SqlQueryParameters parameters)
+        public string Generate(Models.DbData data, ResultRoute result, SqlQueryParameters parameters)
         {
-            var all_tables = result.Paths
-                .Select(p => p.Table)
+            var all_tables = result.Route
+                .Select(r => r.source)
                 .Prepend(result.Start);
             var all_aliases = _tableAliasFactory.Create(all_tables).AppendIndex();
             
@@ -36,7 +36,7 @@ namespace SqlHelper.Factories.SqlQuery
             var source_aliases = all_aliases.Skip(1);
             var target_aliases = all_aliases.SkipLast(1);
             
-            var path_aliases = source_aliases.Zip(
+            var route_aliases = source_aliases.Zip(
                 target_aliases, (source, target) => new
                 {
                     Source = source,
@@ -70,20 +70,20 @@ namespace SqlHelper.Factories.SqlQuery
                 AND ...
                 INNER JOIN ...
              */
-            var joins_data = result.Paths
-                .Zip(path_aliases, (path, alias) =>
+            var joins_data = result.Route
+                .Zip(route_aliases, (route, alias) =>
                 {
                     var source = string.Format("[{0}].[{1}] [{2}]",
-                        path.Table.Schema,
-                        path.Table.Name,
+                        route.source.Schema,
+                        route.source.Name,
                         alias.Source);
 
-                    var columns_source = path.Constraint.Columns
-                        .Select(columns => (path.Constraint.SourceTableId, columns.SourceColumnId))
+                    var columns_source = route.constraint.Columns
+                        .Select(columns => (route.constraint.SourceTableId, columns.SourceColumnId))
                         .Select(key => data.Columns[key].Name);
 
-                    var columns_target = path.Constraint.Columns
-                        .Select(columns => (path.Constraint.TargetTableId, columns.TargetColumnId))
+                    var columns_target = route.constraint.Columns
+                        .Select(columns => (route.constraint.TargetTableId, columns.TargetColumnId))
                         .Select(key => data.Columns[key].Name);
 
                     var columns = columns_source.Zip(columns_target, (column_source, column_target) => string.Format(

@@ -12,7 +12,7 @@ namespace SqlHelper.Paths
             Dictionary<long, List<long>> constraintsByTargetTable,
             Stack<Table> tablesPath,
             Stack<Constraint> constraintsPath,
-            IList<SqlHelperResult> results,
+            IList<ResultRoute> results,
             long tableId)
         {
             var trLookup = graph.Tables[tableId];
@@ -35,19 +35,17 @@ namespace SqlHelper.Paths
                 var tables = tablesPath.SkipLast(1).Reverse();
                 var constraints = constraintsPath.Reverse();
 
-                (long targetTableId, long sourceTableId) key = (start.Id, tables.Last().Id);
-
-                var newSqlHelperResult = new SqlHelperResult
+                var newRoute = new ResultRoute
                 {
                     Start = start,
-                    Paths = tables.Zip(constraints, (table, constraint) => new SqlHelperResultPath
+                    Route = tables.Zip(constraints, (table, constraint) =>
                     {
-                        Table = table,
-                        Constraint = constraint,
+                        (Table source, Constraint constraint) link = (table, constraint);
+                        return link;
                     }).ToList(),
                 };
                 
-                results.Add(newSqlHelperResult);
+                results.Add(newRoute);
             }
             else if (constraintsByTargetTable.ContainsKey(tableId))
             {
@@ -81,9 +79,9 @@ namespace SqlHelper.Paths
             tablesPath.Pop();
         }
 
-        public IList<SqlHelperResult> Help(DbData graph, IList<long> tables)
+        public IList<ResultRoute> Help(DbData graph, IList<long> tables)
         {
-            var results = new List<SqlHelperResult>();
+            var results = new List<ResultRoute>();
 
             // Below is lifted by FirstStupidPathFinder, I think I can do something with this.
 
@@ -123,11 +121,11 @@ namespace SqlHelper.Paths
 
             foreach(var indices in iterator)
             {
-                var paths = indices
+                var routes = indices
                     .Select(i => results[i]);
 
-                var sourceTables = paths
-                    .Select(p => p.Paths.Last().Table.Id);
+                var sourceTables = routes
+                    .Select(p => p.Route.Last().source.Id);
 
                 // Valid results contain 0 or 1 tables that are NOT listed as a source.
                 var parentTableCount = tablesRequired

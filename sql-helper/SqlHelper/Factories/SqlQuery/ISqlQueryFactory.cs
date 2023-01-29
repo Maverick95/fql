@@ -5,6 +5,6 @@ namespace SqlHelper.Factories.SqlQuery
 {
     public interface ISqlQueryFactory
     {
-        public string Generate(Models.DbData graph, SqlHelperResult result, SqlQueryParameters parameters);
+        public string Generate(Models.DbData graph, ResultRoute result, SqlQueryParameters parameters);
     }
 }
