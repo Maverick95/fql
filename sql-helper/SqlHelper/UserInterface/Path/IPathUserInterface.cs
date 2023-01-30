@@ -2,7 +2,7 @@
 
 namespace SqlHelper.UserInterface.Path
 {
-    public interface IPathUserInterfaceVersionTree
+    public interface IPathUserInterface
     {
         public ResultRouteTree Choose(IList<ResultRouteTree> paths);
     }

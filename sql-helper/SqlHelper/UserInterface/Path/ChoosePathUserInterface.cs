@@ -4,11 +4,11 @@ using SqlHelper.Paths;
 
 namespace SqlHelper.UserInterface.Path
 {
-    public class ChoosePathUserInterfaceVersionTree : IPathUserInterfaceVersionTree
+    public class ChoosePathUserInterface : IPathUserInterface
     {
         private readonly IStream _stream;
 
-        public ChoosePathUserInterfaceVersionTree(IStream stream)
+        public ChoosePathUserInterface(IStream stream)
         {
             _stream = stream;
         }

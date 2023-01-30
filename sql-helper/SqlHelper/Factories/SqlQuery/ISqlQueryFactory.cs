@@ -3,7 +3,7 @@ using SqlHelper.Paths;
 
 namespace SqlHelper.Factories.SqlQuery
 {
-    public interface ISqlQueryFactoryVersionTree
+    public interface ISqlQueryFactory
     {
         public string Generate(Models.DbData graph, ResultRouteTree result, SqlQueryParameters parameters);
     }

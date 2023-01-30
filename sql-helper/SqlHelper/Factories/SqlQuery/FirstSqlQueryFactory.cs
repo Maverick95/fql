@@ -6,12 +6,12 @@ using SqlHelper.Paths;
 
 namespace SqlHelper.Factories.SqlQuery
 {
-    public class FirstSqlQueryFactoryVersionTree : ISqlQueryFactoryVersionTree
+    public class FirstSqlQueryFactory : ISqlQueryFactory
     {
         private readonly ITableAliasFactory _tableAliasFactory;
         private readonly IDefaultTypeValueFactory _defaultTypeValueFactory;
 
-        public FirstSqlQueryFactoryVersionTree(
+        public FirstSqlQueryFactory(
             ITableAliasFactory tableAliasFactory,
             IDefaultTypeValueFactory defaultTypeValueFactory)
         {

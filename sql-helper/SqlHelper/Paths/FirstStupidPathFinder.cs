@@ -2,7 +2,7 @@
 
 namespace SqlHelper.Paths
 {
-    public class FirstStupidPathFinderVersionTree : IPathFinderVersionTree
+    public class FirstStupidPathFinder : IPathFinder
     {
         /* Okay so this class is named after what it is. A first stupid dumb attempt.
          * But hey it works!

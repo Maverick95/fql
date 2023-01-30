@@ -6,13 +6,13 @@ using SqlHelper.Paths;
 
 namespace SqlHelper.Factories.SqlQuery
 {
-    public class PrettierSqlQueryFactoryVersionTree : ISqlQueryFactoryVersionTree
+    public class PrettierSqlQueryFactory : ISqlQueryFactory
     {
         private readonly ITableAliasFactory _tableAliasFactory;
         private readonly IDefaultTypeValueFactory _defaultTypeValueFactory;
         private readonly int _padding;
 
-        public PrettierSqlQueryFactoryVersionTree(
+        public PrettierSqlQueryFactory(
             ITableAliasFactory tableAliasFactory,
             IDefaultTypeValueFactory defaultTypeValueFactory,
             int padding)

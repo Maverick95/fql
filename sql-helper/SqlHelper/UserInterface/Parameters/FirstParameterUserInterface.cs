@@ -2,7 +2,6 @@
 using SqlHelper.Helpers;
 using SqlHelper.Models;
 using System.Text.RegularExpressions;
-using SqlHelper.Extensions;
 
 namespace SqlHelper.UserInterface.Parameters
 {
