@@ -98,7 +98,7 @@ namespace SqlHelper.Paths
             tablesPath.Pop();
         }
 
-        public IList<ResultRouteTree> Help(DbData graph, IList<long> tables)
+        public IEnumerable<ResultRouteTree> Help(DbData graph, IList<long> tables)
         {
             var tablesRequired = tables.Distinct();
 

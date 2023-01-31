@@ -1,10 +1,10 @@
 ﻿using Xunit;
 
-namespace SqlHelper.Test.Helpers.TestData
+namespace SqlHelper.Test.Helpers.IListChooseElementIterator.TestData
 {
-    public class IListChooseElementIteratorTestDataCountAndChoose: TheoryData<int, int, IList<IList<int>>>
+    public class GetElementCombinationsWithAtLeastChooseElementsTestData: TheoryData<int, int, IList<IList<int>>>
     {
-        public IListChooseElementIteratorTestDataCountAndChoose()
+        public GetElementCombinationsWithAtLeastChooseElementsTestData()
         {
             #region Edge case of 0 #1
             Add(0, 0, new List<IList<int>>

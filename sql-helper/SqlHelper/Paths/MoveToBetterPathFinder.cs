@@ -79,7 +79,7 @@ namespace SqlHelper.Paths
             tablesPath.Pop();
         }
 
-        public IList<ResultRoute> Help(DbData graph, IList<long> tables)
+        public IEnumerable<ResultRouteTree> Help(DbData graph, IList<long> tables)
         {
             var results = new List<ResultRoute>();
 
@@ -114,38 +114,35 @@ namespace SqlHelper.Paths
             // Generate the iterator to use these connections.
             var count = results.Count;
             // If there are N tables, a valid result must contain at least N - 1 paths between tables.
-            var choose = tablesRequired.Count() - 1;
-            var iterator = IListChooseElementIterator.GetEnumerable(count, choose);
+            var minChoose = tablesRequired.Count() - 1;
 
-            var nSolutions = 0;
-
-            foreach(var indices in iterator)
+            for (var choose = minChoose; choose <= count; choose++)
             {
-                var routes = indices
-                    .Select(i => results[i]);
-
-                var sourceTables = routes
-                    .Select(p => p.Route.Last().source.Id);
-
-                // Valid results contain 0 or 1 tables that are NOT listed as a source.
-                var parentTableCount = tablesRequired
-                    .GroupJoin(
-                        sourceTables,
-                        id => id, id => id,
-                        (id, tables) => tables.Any()
-                    )
-                    .Count(any => any == false);
-
-                if (parentTableCount < 2)
+                var iterator = IListChooseElementIterator.GetElementCombinationsWithChooseElements(count, choose);
+                foreach(var indices in iterator)
                 {
-                    // This is really wrong for now.
-                    //return paths.ToList();
-                    Console.WriteLine($"Solution number {++nSolutions}");
+                    var routes = indices
+                        .Select(i => results[i]);
+
+                    var sourceTables = routes
+                        .Select(p => p.Route.Last().source.Id);
+
+                    // Valid results contain 0 or 1 tables that are NOT listed as a source.
+                    var parentTableCount = tablesRequired
+                        .GroupJoin(
+                            sourceTables,
+                            id => id, id => id,
+                            (id, tables) => tables.Any()
+                        )
+                        .Count(any => any == false);
+
+                    if (parentTableCount < 2)
+                    {
+                        // Need to change TODO
+                        yield return new ResultRouteTree(routes.First());
+                    }
                 }
             }
-
-            // This is really wrong for now.
-            return null;
         }
     }
 }

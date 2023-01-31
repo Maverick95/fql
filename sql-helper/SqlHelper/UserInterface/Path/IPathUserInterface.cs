@@ -4,6 +4,6 @@ namespace SqlHelper.UserInterface.Path
 {
     public interface IPathUserInterface
     {
-        public ResultRouteTree Choose(IList<ResultRouteTree> paths);
+        public ResultRouteTree Choose(IEnumerable<ResultRouteTree> paths);
     }
 }

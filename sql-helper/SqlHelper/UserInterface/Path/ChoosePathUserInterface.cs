@@ -13,7 +13,7 @@ namespace SqlHelper.UserInterface.Path
             _stream = stream;
         }
 
-        public ResultRouteTree Choose(IList<ResultRouteTree> results)
+        public ResultRouteTree Choose(IEnumerable<ResultRouteTree> results)
         {
             /*
              * Currently we are assuming a particular structure for each ResultRouteTree,
@@ -49,7 +49,7 @@ namespace SqlHelper.UserInterface.Path
 
             var name_space = max_name_length + padding;
 
-            var ids = Enumerable.Range(1, results.Count);
+            var ids = Enumerable.Range(1, results.Count());
 
             _stream.Write("Select the path to use, for example, to select path 1, enter '1'");
 

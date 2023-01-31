@@ -43,6 +43,6 @@ namespace SqlHelper.Paths
 
     public interface IPathFinder
     {
-        public IList<ResultRouteTree> Help(DbData graph, IList<long> tables);
+        public IEnumerable<ResultRouteTree> Help(DbData graph, IList<long> tables);
     }
 }

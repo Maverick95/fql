@@ -55,7 +55,7 @@ namespace SqlHelper
                     Console.Write("No output to generate!");
                     return;
                 }
-                var path = paths.Count == 1 ?
+                var path = paths.Count() == 1 ?
                     paths.First() :
                     _pathUserInterface.Choose(paths);
                 
@@ -68,7 +68,7 @@ namespace SqlHelper
         {
             IDbDataFactory dbDataFactory = new LocalSqlExpressDbDataFactory(args[0]);
 
-            IPathFinder pathFinder = new FirstStupidPathFinder();
+            IPathFinder pathFinder = new MoveToBetterPathFinder();
 
             ISqlQueryFactory sqlQueryFactory = new PrettierSqlQueryFactory(
                 new FullyQualifiedTableAliasFactory(),
