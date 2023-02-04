@@ -79,6 +79,81 @@ namespace SqlHelper.Paths
             tablesPath.Pop();
         }
 
+        private class TableDepthDataComparer: IComparer<TableDepthData>
+        {
+            public int Compare(TableDepthData x, TableDepthData y)
+            {
+                if (x.Depth < y.Depth)
+                    return -1;
+                if (x.Depth > y.Depth)
+                    return 1;
+                if (x.TreeId < y.TreeId)
+                    return -1;
+                if (x.TreeId > y.TreeId)
+                    return 1;
+                return 0;
+            }
+        }
+
+        private class TableDepthData
+        {
+            public long TableId { get; set; }
+            public int Depth { get; set; }
+            public int TreeId { get; set; }
+            public ResultRouteTree Tree { get; set; }
+        }
+
+        private ResultRouteTree MergeDepthFirst(IEnumerable<ResultRouteTree> trees)
+        {
+            var treeIds = Enumerable.Range(0, trees.Count());
+            var treeData = treeIds.Zip(trees, (id, tree) => new
+            {
+                TreeId = id,
+                Tree = tree
+            });
+
+            var treeMergeData = treeData
+                .SelectMany(td => td.Tree.Depths.Select(depth => new TableDepthData
+                {
+                    TableId = depth.table.Id,
+                    Depth = depth.depth,
+                    TreeId = td.TreeId,
+                    Tree = td.Tree,
+                }));
+
+            var comparer = new TableDepthDataComparer();
+            
+            while (treeData.Count() > 1)
+            {
+                var nextTree = treeData.First();
+                treeData = treeData.Skip(1);
+                
+                var treeMergeLookup = treeMergeData
+                    .Where(tmd => tmd.TableId == nextTree.Tree.Table.Id)
+                    .Where(tmd => tmd.TreeId != nextTree.TreeId)
+                    .Min(comparer);
+
+                if (treeMergeLookup is not null)
+                {
+                    treeMergeLookup.Tree.TryMergeFromRoot(nextTree.Tree);
+                    var updates = treeMergeData
+                        .Where(tmd => tmd.TreeId == nextTree.TreeId);
+
+                    foreach(var update in updates)
+                    {
+                        update.TreeId = treeMergeLookup.TreeId;
+                        update.Depth = update.Depth + treeMergeLookup.Depth;
+                    }
+                }
+                else
+                {
+                    treeData = treeData.Append(nextTree);
+                }
+            }
+
+            return treeData.First().Tree;
+        }
+
         public IEnumerable<ResultRouteTree> Help(DbData graph, IList<long> tables)
         {
             var results = new List<ResultRoute>();
@@ -138,8 +213,9 @@ namespace SqlHelper.Paths
 
                     if (parentTableCount < 2)
                     {
-                        // Need to change TODO
-                        yield return new ResultRouteTree(routes.First());
+                        var trees = routes.Select(route => new ResultRouteTree(route));
+                        var result = MergeDepthFirst(trees);
+                        yield return result;
                     }
                 }
             }
