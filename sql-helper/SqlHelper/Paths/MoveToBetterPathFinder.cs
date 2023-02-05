@@ -110,7 +110,7 @@ namespace SqlHelper.Paths
             {
                 TreeId = id,
                 Tree = tree
-            });
+            }).ToList();
 
             var treeMergeData = treeData
                 .SelectMany(td => td.Tree.Depths.Select(depth => new TableDepthData
@@ -119,14 +119,15 @@ namespace SqlHelper.Paths
                     Depth = depth.depth,
                     TreeId = td.TreeId,
                     Tree = td.Tree,
-                }));
+                }))
+                .ToList();
 
             var comparer = new TableDepthDataComparer();
             
             while (treeData.Count() > 1)
             {
                 var nextTree = treeData.First();
-                treeData = treeData.Skip(1);
+                treeData.RemoveAt(0);
                 
                 var treeMergeLookup = treeMergeData
                     .Where(tmd => tmd.TableId == nextTree.Tree.Table.Id)
@@ -147,7 +148,7 @@ namespace SqlHelper.Paths
                 }
                 else
                 {
-                    treeData = treeData.Append(nextTree);
+                    treeData.Add(nextTree);
                 }
             }
 
