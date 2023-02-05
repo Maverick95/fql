@@ -105,6 +105,7 @@ namespace SqlHelper.Paths
 
         private ResultRouteTree MergeDepthFirst(IEnumerable<ResultRouteTree> trees)
         {
+            // We will be editing tree objects using references, so important to evaluate now.
             var treeIds = Enumerable.Range(0, trees.Count());
             var treeData = treeIds.Zip(trees, (id, tree) => new
             {
