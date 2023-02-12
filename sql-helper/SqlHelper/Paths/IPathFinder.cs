@@ -12,14 +12,7 @@ namespace SqlHelper.Paths
     {
         public Table Table { get; private set; }
 
-        public ResultRouteTree Parent { get; private set; }
-
         public IList<(ResultRoute route, ResultRouteTree child)> Children { get; private set; }
-
-        public bool IsRoot
-        {
-            get => Parent is null;
-        }
 
         public bool IsLeaf
         {
@@ -66,17 +59,18 @@ namespace SqlHelper.Paths
             return false;
         }
 
-        public ResultRouteTree() { }
+        public ResultRouteTree(Table table)
+        {
+            Table = table;
+            Children = new List<(ResultRoute, ResultRouteTree)>();
+        }
 
         public ResultRouteTree(ResultRoute route)
         {
             Table = route.Start;
-            Children = new List<(ResultRoute route, ResultRouteTree child)>();
+            Children = new List<(ResultRoute, ResultRouteTree)>();
 
-            var child = new ResultRouteTree();
-            child.Parent = this;
-            child.Table = route.Route.Last().source;
-
+            var child = new ResultRouteTree(route.Route.Last().source);
             Children.Add((route, child));
         }
     }

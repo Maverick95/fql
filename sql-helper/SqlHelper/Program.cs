@@ -77,7 +77,7 @@ namespace SqlHelper
 
             IParameterUserInterface parameterUserInterface = new FirstParameterUserInterface(new ConsoleStream());
 
-            IPathUserInterface pathUserInterface = new ChoosePathUserInterface(new ConsoleStream());
+            IPathUserInterface pathUserInterface = new MoveToBetterPathUserInterface(new ConsoleStream());
 
             IOutputHandler outputHandler = new PrintToConsoleOutputHandler(new ConsoleStream());
 
