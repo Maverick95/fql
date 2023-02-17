@@ -46,50 +46,54 @@ namespace SqlHelper.UserInterface.Path
             return null;
         }
 
+        private class PathData
+        {
+            public int Depth { get; set; }
+            public ResultRoute Route { get; set; }
+            public ResultRouteTree Tree { get; set; }
+        }
+
         private void Write_Path(ResultRouteTree path)
         {
+            var pathTransform = (PathData parent, ResultRoute childRoute, ResultRouteTree childTree) => parent is null ? // Handle root node
+                new PathData
+                {
+                    Depth = 0,
+                    Route = null,
+                    Tree = childTree,
+                } :
+                new PathData
+                {
+                    Depth = parent.Depth + (parent.Route?.Route.Count ?? 1),
+                    Route = childRoute,
+                    Tree = childTree,
+                };
+            
+            var pathEnumerator = path.EnumerateDepthFirst(pathTransform);
+            
             var writePathData = new List<(int depth, int offset, Table table)>();
-
-            var writePathDataHelper = new Stack<(int depth, ResultRoute route, ResultRouteTree tree)>();
-            writePathDataHelper.Push((0, null, path));
-
             var offset = 0;
 
-            while (writePathDataHelper.Any())
+            foreach (var p in pathEnumerator)
             {
-                (var depth, var route, var tree) = writePathDataHelper.Pop();
-
-                var newDepth = depth;
-
-                if (route is not null)
+                if (p.Route is not null)
                 {
-                    var tables = route.Route
+                    var tables = p.Route.Route
                         .Select(r => r.source)
                         .ToList();
 
-                    var tablesDepths = Enumerable.Range(depth, tables.Count());
-
+                    var tablesDepths = Enumerable.Range(p.Depth, tables.Count());
                     var newWritePathData = tablesDepths.Zip(tables, (depth, table) => (depth, offset, table));
-
                     writePathData.AddRange(newWritePathData);
-                    newDepth += tables.Count();
                 }
-                else // Should only hit when considering Root Node.
+                else // Handle root node
                 {
-                    writePathData.Add((depth, offset, tree.Table));
-                    newDepth += 1;
+                    writePathData.Add((p.Depth, offset, p.Tree.Table));
                 }
 
-                if (tree.IsLeaf)
+                if (p.Tree.IsLeaf)
                 {
                     offset += 1;
-                }
-                else
-                {
-                    foreach (var child in tree.Children)
-                    {
-                        writePathDataHelper.Push((newDepth, child.route, child.child));
-                    }
                 }
             }
 
@@ -97,12 +101,14 @@ namespace SqlHelper.UserInterface.Path
                 .SelectMany(data => new List<string> { data.table.Schema, data.table.Name })
                 .Max(name => name.Length);
 
+            const int padding = 3;
+            var outputLength = maxNameLength + padding;
+            var empty = new string(' ', outputLength);
 
             var writePathDataGroups = writePathData
                 .GroupBy(data => data.depth)
                 .OrderBy(group => group.Key);
 
-            const int padding = 3;
 
             foreach (var group in writePathDataGroups)
             {
@@ -115,29 +121,30 @@ namespace SqlHelper.UserInterface.Path
                         data => data.offset,
                         (offset, data) => data.Any() ? data.Single().table : null);
 
-                var outputDataLines = writeGroupData
-                    .Select(data => data is not null ? "|" : "")
-                    .Select(output => output.PadRight(maxNameLength + padding));
-
-                var outputLines = string.Join("", outputDataLines);
-
+                var outputData = writeGroupData
+                    .Select(data =>
+                        data is not null ?
+                        new
+                        {
+                            Arrow = "|".PadRight(outputLength),
+                            Schema = data.Schema.PadRight(outputLength),
+                            Name = data.Name.PadRight(outputLength),
+                        } :
+                        new
+                        {
+                            Arrow = empty,
+                            Schema = empty,
+                            Name = empty,
+                        });
+                
+                var outputLines = string.Join("", outputData.Select(output => output.Arrow));
                 _stream.Write(outputLines);
 
-                var outputDataSchemas = writeGroupData
-                    .Select(data => data is not null ? data.Schema : "")
-                    .Select(output => output.PadRight(maxNameLength + padding));
-
-                var outputSchemas = string.Join("", outputDataSchemas);
-
+                var outputSchemas = string.Join("", outputData.Select(output => output.Schema));
                 _stream.Write(outputSchemas);
 
-                var outputDataTableNames = writeGroupData
-                    .Select(data => data is not null ? data.Name : "")
-                    .Select(output => output.PadRight(maxNameLength + padding));
-
-                var outputTableNames = string.Join("", outputDataTableNames);
-
-                _stream.Write(outputTableNames);
+                var outputNames = string.Join("", outputData.Select(output => output.Name));
+                _stream.Write(outputNames);
             }
         }
 

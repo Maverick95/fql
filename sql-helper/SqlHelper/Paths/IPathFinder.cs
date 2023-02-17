@@ -73,6 +73,33 @@ namespace SqlHelper.Paths
             var child = new ResultRouteTree(route.Route.Last().source);
             Children.Add((route, child));
         }
+
+        public IEnumerable<T> EnumerateDepthFirst<T>(Func<T, ResultRoute, ResultRouteTree, T> generator)
+        {
+            var elements_depth_first = new Stack<(ResultRouteTree, T)>();
+            var root = (this, generator(default, default, this));
+            elements_depth_first.Push(root);
+
+            while (elements_depth_first.Any())
+            {
+                (var tree, var transform) = elements_depth_first.Pop();
+                yield return transform;
+
+                foreach (var child in tree.Children)
+                {
+                    var next = (child.child, generator(transform, child.route, child.child));
+                    elements_depth_first.Push(next);
+                }
+            }
+
+            yield break;
+        }
+
+        public IEnumerable<(ResultRoute route, ResultRouteTree tree)> EnumerateDepthFirst()
+        {
+            var transform_identity = ((ResultRoute, ResultRouteTree) _, ResultRoute childRoute, ResultRouteTree childTree) => (childRoute, childTree);
+            return EnumerateDepthFirst(transform_identity);
+        }
     }
 
     public interface IPathFinder
