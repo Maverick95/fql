@@ -55,21 +55,16 @@ namespace SqlHelper.UserInterface.Path
 
         private void Write_Path(ResultRouteTree path)
         {
-            var pathTransform = (PathData parent, ResultRoute childRoute, ResultRouteTree childTree) => parent is null ? // Handle root node
-                new PathData
-                {
-                    Depth = 0,
-                    Route = null,
-                    Tree = childTree,
-                } :
-                new PathData
-                {
-                    Depth = parent.Depth + (parent.Route?.Route.Count ?? 1),
-                    Route = childRoute,
-                    Tree = childTree,
-                };
+            var pathInitiator = (ResultRouteTree parentTree) => new PathData { Depth = 0, Route = null, Tree = parentTree };
+
+            var pathGenerator = (PathData parent, ResultRoute childRoute, ResultRouteTree childTree) => new PathData
+            {
+                Depth = parent.Depth + (parent.Route?.Route.Count ?? 1),
+                Route = childRoute,
+                Tree = childTree,
+            };
             
-            var pathEnumerator = path.EnumerateDepthFirst(pathTransform);
+            var pathEnumerator = path.EnumerateDepthFirst(pathInitiator, pathGenerator);
             
             var writePathData = new List<(int depth, int offset, Table table)>();
             var offset = 0;

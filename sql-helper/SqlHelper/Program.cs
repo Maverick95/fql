@@ -70,7 +70,7 @@ namespace SqlHelper
 
             IPathFinder pathFinder = new MoveToBetterPathFinder();
 
-            ISqlQueryFactory sqlQueryFactory = new PrettierSqlQueryFactory(
+            ISqlQueryFactory sqlQueryFactory = new MoveToBetterPrettierSqlQueryFactory(
                 new FullyQualifiedTableAliasFactory(),
                 new FirstDefaultTypeValueFactory(),
                 5);
