@@ -74,30 +74,12 @@ namespace SqlHelper.Paths
             Children.Add((route, child));
         }
 
-        public IEnumerable<T> EnumerateDepthFirst<T>(
-            Func<ResultRouteTree, T> initiator,
-            Func<T, ResultRoute, ResultRouteTree, T> generator)
-        {
-            var elements_depth_first = new Stack<(ResultRouteTree, T)>();
-            var root = (this, initiator(this));
-            elements_depth_first.Push(root);
-
-            while (elements_depth_first.Any())
-            {
-                (var tree, var transform) = elements_depth_first.Pop();
-                yield return transform;
-
-                foreach (var child in tree.Children)
-                {
-                    var next = (child.child, generator(transform, child.route, child.child));
-                    elements_depth_first.Push(next);
-                }
-            }
-
-            yield break;
-        }
-
-        public void EnumerateDepthFirstWithAction<T>(
+        /*
+         * A quick note about this function.
+         * At first glance it seems it doesn't do anything.
+         * The idea is that initiator / generator have side-effects.
+         */
+        public void EnumerateDepthFirst<T>(
             Func<ResultRouteTree, T> initiator,
             Func<T, ResultRoute, ResultRouteTree, T> generator)
         {
@@ -114,13 +96,6 @@ namespace SqlHelper.Paths
                     elements_depth_first.Push(next);
                 }
             }
-        }
-
-        public IEnumerable<(ResultRoute route, ResultRouteTree tree)> EnumerateDepthFirst()
-        {
-            var initiator_identity = (ResultRouteTree parentTree) => ((ResultRoute)null, parentTree);
-            var generator_identity = ((ResultRoute, ResultRouteTree) _, ResultRoute childRoute, ResultRouteTree childTree) => (childRoute, childTree);
-            return EnumerateDepthFirst(initiator_identity, generator_identity);
         }
     }
 

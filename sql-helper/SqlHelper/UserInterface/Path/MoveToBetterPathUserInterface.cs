@@ -46,52 +46,37 @@ namespace SqlHelper.UserInterface.Path
             return null;
         }
 
-        private class PathData
-        {
-            public int Depth { get; set; }
-            public ResultRoute Route { get; set; }
-            public ResultRouteTree Tree { get; set; }
-        }
-
         private void Write_Path(ResultRouteTree path)
         {
-            var pathInitiator = (ResultRouteTree parentTree) => new PathData { Depth = 0, Route = null, Tree = parentTree };
-
-            var pathGenerator = (PathData parent, ResultRoute childRoute, ResultRouteTree childTree) => new PathData
-            {
-                Depth = parent.Depth + (parent.Route?.Route.Count ?? 1),
-                Route = childRoute,
-                Tree = childTree,
-            };
-            
-            var pathEnumerator = path.EnumerateDepthFirst(pathInitiator, pathGenerator);
-            
             var writePathData = new List<(int depth, int offset, Table table)>();
             var offset = 0;
 
-            foreach (var p in pathEnumerator)
+            var pathInitiator = (ResultRouteTree parentTree) =>
             {
-                if (p.Route is not null)
-                {
-                    var tables = p.Route.Route
-                        .Select(r => r.source)
-                        .ToList();
+                writePathData.Add((0, offset, parentTree.Table));
+                return 0;
+            };
 
-                    var tablesDepths = Enumerable.Range(p.Depth, tables.Count());
-                    var newWritePathData = tablesDepths.Zip(tables, (depth, table) => (depth, offset, table));
-                    writePathData.AddRange(newWritePathData);
-                }
-                else // Handle root node
-                {
-                    writePathData.Add((p.Depth, offset, p.Tree.Table));
-                }
+            var pathGenerator = (int parentDepth, ResultRoute childRoute, ResultRouteTree childTree) =>
+            {
+                var tables = childRoute.Route.Select(r => r.source).ToList();
 
-                if (p.Tree.IsLeaf)
+                var childDepth = parentDepth + childRoute.Route.Count;
+
+                var tablesDepths = Enumerable.Range(parentDepth + 1, tables.Count());
+                var newWritePathData = tablesDepths.Zip(tables, (depth, table) => (depth, offset, table));
+                writePathData.AddRange(newWritePathData);
+
+                if (childTree.IsLeaf)
                 {
                     offset += 1;
                 }
-            }
 
+                return childDepth;
+            };
+            
+            path.EnumerateDepthFirst(pathInitiator, pathGenerator);
+            
             var maxNameLength = writePathData
                 .SelectMany(data => new List<string> { data.table.Schema, data.table.Name })
                 .Max(name => name.Length);

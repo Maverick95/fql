@@ -3,11 +3,6 @@ using SqlHelper.Factories.DefaultTypeValue;
 using SqlHelper.Factories.TableAlias;
 using SqlHelper.Models;
 using SqlHelper.Paths;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SqlHelper.Factories.SqlQuery
 {
@@ -60,7 +55,7 @@ namespace SqlHelper.Factories.SqlQuery
                 return index;
             };
 
-            result.EnumerateDepthFirstWithAction(pathInitiator, pathGenerator);
+            result.EnumerateDepthFirst(pathInitiator, pathGenerator);
 
             // Prepare prefixes.
             var prefixes = new Dictionary<string, string>
