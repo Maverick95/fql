@@ -181,9 +181,14 @@ namespace SqlHelper.Paths
         {
             var results = new List<ResultRoute>();
 
-            // Below is lifted by FirstStupidPathFinder, I think I can do something with this.
-
             var tablesRequired = tables.Distinct();
+
+            // Handle easy case.
+            if (tablesRequired.Count() == 1)
+            {
+                var rootTable = graph.Tables[tablesRequired.Single()];
+                yield return new ResultRouteTree(rootTable);
+            }
 
             var constraintsUsed = graph.Constraints.ToDictionary(
                 keySelector: c => c.Key,
