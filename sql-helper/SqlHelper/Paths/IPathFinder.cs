@@ -14,26 +14,6 @@ namespace SqlHelper.Paths
 
         public IList<(ResultRoute route, ResultRouteTree child)> Children { get; private set; }
 
-        public bool IsLeaf
-        {
-            get => Children is null || Children.Any() == false;
-        }
-
-        private IEnumerable<(int depth, Table table)> DepthsInternal(int initialDepth = 0)
-        {
-            var depths = Children?.Select(c => c.child)
-                .SelectMany(child => child.DepthsInternal(initialDepth + 1))
-                .ToList() ?? new();
-
-            depths.Add((initialDepth, Table));
-            return depths;
-        }
-
-        public IEnumerable<(int depth, Table table)> Depths
-        {
-            get => DepthsInternal();
-        }
-
         public bool TryMergeFromRoot(ResultRouteTree incoming)
         {
             var queue = new Queue<ResultRouteTree>();
@@ -53,7 +33,6 @@ namespace SqlHelper.Paths
                 {
                     queue.Enqueue(child.child);
                 }
-
             }
 
             return false;

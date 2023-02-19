@@ -100,28 +100,48 @@ namespace SqlHelper.Paths
             public long TableId { get; set; }
             public int Depth { get; set; }
             public int TreeId { get; set; }
-            public ResultRouteTree Tree { get; set; }
         }
 
         private ResultRouteTree MergeDepthFirst(IEnumerable<ResultRouteTree> trees)
         {
-            // We will be editing tree objects using references, so important to evaluate now.
-            var treeIds = Enumerable.Range(0, trees.Count());
-            var treeData = treeIds.Zip(trees, (id, tree) => new
-            {
-                TreeId = id,
-                Tree = tree
-            }).ToList();
+            var treeData = new List<(int treeId, ResultRouteTree tree)>();
+            var treeMergeData = new List<TableDepthData>();
 
-            var treeMergeData = treeData
-                .SelectMany(td => td.Tree.Depths.Select(depth => new TableDepthData
+            var treeId = 0;
+
+            var pathInitiator = (ResultRouteTree rootTree) =>
+            {
+                var rootTreeId = treeId;
+                var rootDepth = 0;
+
+                treeData.Add((rootTreeId, rootTree));
+                treeMergeData.Add(new TableDepthData
                 {
-                    TableId = depth.table.Id,
-                    Depth = depth.depth,
-                    TreeId = td.TreeId,
-                    Tree = td.Tree,
-                }))
-                .ToList();
+                    TableId = rootTree.Table.Id,
+                    Depth = rootDepth,
+                    TreeId = rootTreeId
+                });
+
+                treeId++;
+                return (rootTreeId, rootTree, rootDepth);
+            };
+
+            var pathGenerator = ((int, ResultRouteTree, int) parent, ResultRoute _, ResultRouteTree childTree) =>
+            {
+                (var rootTreeId, var rootTree, var parentDepth) = parent;
+                var childDepth = parentDepth + 1;
+
+                treeMergeData.Add(new TableDepthData
+                {
+                    TableId = childTree.Table.Id,
+                    Depth = childDepth,
+                    TreeId = rootTreeId
+                });
+
+                return (rootTreeId, rootTree, childDepth);
+            };
+
+            trees.ToList().ForEach(tree => tree.EnumerateDepthFirst(pathInitiator, pathGenerator));
 
             var comparer = new TableDepthDataComparer();
             
@@ -131,15 +151,16 @@ namespace SqlHelper.Paths
                 treeData.RemoveAt(0);
                 
                 var treeMergeLookup = treeMergeData
-                    .Where(tmd => tmd.TableId == nextTree.Tree.Table.Id)
-                    .Where(tmd => tmd.TreeId != nextTree.TreeId)
+                    .Where(tmd => tmd.TableId == nextTree.tree.Table.Id)
+                    .Where(tmd => tmd.TreeId != nextTree.treeId)
                     .Min(comparer);
 
                 if (treeMergeLookup is not null)
                 {
-                    treeMergeLookup.Tree.TryMergeFromRoot(nextTree.Tree);
+                    var treeMerge = treeData.Single(tree => tree.treeId == treeMergeLookup.TreeId);
+                    treeMerge.tree.TryMergeFromRoot(nextTree.tree);
                     var updates = treeMergeData
-                        .Where(tmd => tmd.TreeId == nextTree.TreeId);
+                        .Where(tmd => tmd.TreeId == nextTree.treeId);
 
                     foreach(var update in updates)
                     {
@@ -153,7 +174,7 @@ namespace SqlHelper.Paths
                 }
             }
 
-            return treeData.First().Tree;
+            return treeData.First().tree;
         }
 
         public IEnumerable<ResultRouteTree> Help(DbData graph, IList<long> tables)

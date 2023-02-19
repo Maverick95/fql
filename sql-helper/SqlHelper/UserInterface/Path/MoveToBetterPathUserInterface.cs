@@ -67,7 +67,7 @@ namespace SqlHelper.UserInterface.Path
                 var newWritePathData = tablesDepths.Zip(tables, (depth, table) => (depth, offset, table));
                 writePathData.AddRange(newWritePathData);
 
-                if (childTree.IsLeaf)
+                if (childTree.Children.Any() == false)
                 {
                     offset += 1;
                 }
