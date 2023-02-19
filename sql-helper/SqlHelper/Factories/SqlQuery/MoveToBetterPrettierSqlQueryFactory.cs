@@ -108,15 +108,28 @@ namespace SqlHelper.Factories.SqlQuery
                     table => table.Id == data.Table.Id))
                 .Select(data => $"[{data.Alias}].*");
 
-            var padded_prefixes_select = Enumerable
-                .Repeat(
-                    padded_prefixes["select_other"], content_select.Count() - 1)
-                .Prepend(
-                    padded_prefixes["select_first"]
-                );
+            var selects = new List<string>();
 
-            var selects = padded_prefixes_select.Zip(content_select,
-                (prefix, content) => $"{prefix}{content}");
+            if (content_select.Any())
+            {
+
+                var padded_prefixes_select = Enumerable
+                    .Repeat(
+                        padded_prefixes["select_other"], content_select.Count() - 1)
+                    .Prepend(
+                        padded_prefixes["select_first"]
+                    );
+
+                var table_selects = padded_prefixes_select.Zip(content_select,
+                    (prefix, content) => $"{prefix}{content}");
+
+                selects.AddRange(table_selects);
+            }
+            else
+            {
+                var single_select = $"{padded_prefixes["select_first"]}*";
+                selects.Add(single_select);
+            }
 
             /*
                 FROM
