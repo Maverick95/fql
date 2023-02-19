@@ -112,7 +112,6 @@ namespace SqlHelper.Factories.SqlQuery
 
             if (content_select.Any())
             {
-
                 var padded_prefixes_select = Enumerable
                     .Repeat(
                         padded_prefixes["select_other"], content_select.Count() - 1)

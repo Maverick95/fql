@@ -1,12 +1,8 @@
-﻿using SqlHelper.Models;
+﻿using FluentAssertions;
+using SqlHelper.Models;
 using SqlHelper.Paths;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using SqlHelper.Test.TestUtilities.Paths;
 using Xunit;
-using FluentAssertions;
 
 namespace SqlHelper.Test.Paths
 {
@@ -15,10 +11,9 @@ namespace SqlHelper.Test.Paths
         /*
          * Test Case 1 - Simple Path
          * Single table
-         */ 
-
+         */
         [Fact]
-        public void Help_ShouldLocate_SingleRoute_Along_SingleChain()
+        public void Help_ShouldLocate_SingleRouteWithSingleTable_Along_SingleChain()
         {
             // ARRANGE
             var graph = new DbData
@@ -61,13 +56,17 @@ namespace SqlHelper.Test.Paths
 
             var pathFinder = new MoveToBetterPathFinder();
 
-            var expected_tree_0 = new ResultRouteTree(new Table { Id = 5 });
-
-            var expected = new List<ResultRouteTree> { expected_tree_0 };
-
+            var expected = new List<ResultRouteTreeTest>
+            {
+                new()
+                {
+                    Table = new() { Id = 5 },
+                    Children = new List<(ResultRoute, ResultRouteTreeTest)>(),
+                },
+            };
+        
             // ACT
-            var actual = pathFinder.Help(graph, tables)
-                .ToList();
+            var actual = pathFinder.Help(graph, tables).ToList();
 
             // ASSERT
             actual.Should().BeEquivalentTo(expected);
