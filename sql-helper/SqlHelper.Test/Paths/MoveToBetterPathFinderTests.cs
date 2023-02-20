@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using SqlHelper.Models;
 using SqlHelper.Paths;
-using SqlHelper.Test.TestUtilities.Paths;
 using Xunit;
 
 namespace SqlHelper.Test.Paths
@@ -59,12 +58,12 @@ namespace SqlHelper.Test.Paths
 
             var pathFinder = new MoveToBetterPathFinder();
 
-            var expected = new List<ResultRouteTreeTest>
+            var expected = new List<ResultRouteTree>
             {
                 new()
                 {
                     Table = new() { Id = 5 },
-                    Children = new List<(ResultRoute, ResultRouteTreeTest)>(),
+                    Children = new List<(ResultRoute, ResultRouteTree)>(),
                 },
             };
         
@@ -126,12 +125,12 @@ namespace SqlHelper.Test.Paths
 
             var pathFinder = new MoveToBetterPathFinder();
 
-            var expected = new List<ResultRouteTreeTest>
+            var expected = new List<ResultRouteTree>
             {
-                new ResultRouteTreeTest
+                new ResultRouteTree
                 {
                     Table = new() { Id = 5 },
-                    Children = new List<(ResultRoute, ResultRouteTreeTest)>
+                    Children = new List<(ResultRoute, ResultRouteTree)>
                     {
                         (
                             new ResultRoute
@@ -149,10 +148,10 @@ namespace SqlHelper.Test.Paths
                                     )
                                 }
                             },
-                            new ResultRouteTreeTest
+                            new ResultRouteTree
                             {
                                 Table = new() { Id = 3 },
-                                Children = new List<(ResultRoute, ResultRouteTreeTest)>
+                                Children = new List<(ResultRoute, ResultRouteTree)>
                                 {
                                     (
                                         new ResultRoute
@@ -166,10 +165,10 @@ namespace SqlHelper.Test.Paths
                                                 )
                                             }
                                         },
-                                        new ResultRouteTreeTest
+                                        new ResultRouteTree
                                         {
                                             Table = new() { Id = 2 },
-                                            Children = new List<(ResultRoute, ResultRouteTreeTest)> { },
+                                            Children = new List<(ResultRoute, ResultRouteTree)> { },
                                         }
                                     )
                                 },
@@ -238,12 +237,12 @@ namespace SqlHelper.Test.Paths
 
             var pathFinder = new MoveToBetterPathFinder();
 
-            var expected = new List<ResultRouteTreeTest>
+            var expected = new List<ResultRouteTree>
             {
-                new ResultRouteTreeTest
+                new ResultRouteTree
                 {
                     Table = new() { Id = 5 },
-                    Children = new List<(ResultRoute, ResultRouteTreeTest)>
+                    Children = new List<(ResultRoute, ResultRouteTree)>
                     {
                         (
                             new ResultRoute
@@ -261,10 +260,10 @@ namespace SqlHelper.Test.Paths
                                     )
                                 }
                             },
-                            new ResultRouteTreeTest
+                            new ResultRouteTree
                             {
                                 Table = new() { Id = 3 },
-                                Children = new List<(ResultRoute, ResultRouteTreeTest)> { },
+                                Children = new List<(ResultRoute, ResultRouteTree)> { },
                             }
                         ),
                         (
@@ -283,10 +282,10 @@ namespace SqlHelper.Test.Paths
                                     ),
                                 },
                             },
-                            new ResultRouteTreeTest
+                            new ResultRouteTree
                             {
                                 Table = new() { Id = 1 },
-                                Children = new List<(ResultRoute, ResultRouteTreeTest)> { },
+                                Children = new List<(ResultRoute, ResultRouteTree)> { },
                             }
                         )
                     },

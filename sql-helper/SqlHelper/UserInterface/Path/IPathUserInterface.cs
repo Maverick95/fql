@@ -1,4 +1,4 @@
-﻿using SqlHelper.Paths;
+﻿using SqlHelper.Models;
 
 namespace SqlHelper.UserInterface.Path
 {

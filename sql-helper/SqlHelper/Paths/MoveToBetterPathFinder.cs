@@ -141,7 +141,7 @@ namespace SqlHelper.Paths
                 return (rootTreeId, rootTree, childDepth);
             };
 
-            trees.ToList().ForEach(tree => tree.EnumerateDepthFirst(pathInitiator, pathGenerator));
+            trees.ToList().ForEach(tree => ResultRouteTreeHelpers.EnumerateTreeDepthFirst(tree, pathInitiator, pathGenerator));
 
             var comparer = new TableDepthDataComparer();
             
@@ -158,7 +158,7 @@ namespace SqlHelper.Paths
                 if (treeMergeLookup is not null)
                 {
                     var treeMerge = treeData.Single(tree => tree.treeId == treeMergeLookup.TreeId);
-                    treeMerge.tree.TryMergeFromRoot(nextTree.tree);
+                    ResultRouteTreeHelpers.TryMergeTreesFromRoot(treeMerge.tree, nextTree.tree);
                     var updates = treeMergeData
                         .Where(tmd => tmd.TreeId == nextTree.treeId);
 
@@ -187,7 +187,8 @@ namespace SqlHelper.Paths
             if (tablesRequired.Count() == 1)
             {
                 var rootTable = graph.Tables[tablesRequired.Single()];
-                yield return new ResultRouteTree(rootTable);
+                yield return ResultRouteTreeHelpers.CreateTreeFromTable(rootTable);
+                yield break;
             }
 
             var constraintsUsed = graph.Constraints.ToDictionary(
@@ -241,7 +242,7 @@ namespace SqlHelper.Paths
 
                     if (parentTableCount < 2)
                     {
-                        var trees = routes.Select(route => new ResultRouteTree(route));
+                        var trees = routes.Select(route => ResultRouteTreeHelpers.CreateTreeFromRoute(route));
                         var result = MergeDepthFirst(trees);
                         yield return result;
                     }

@@ -1,8 +1,8 @@
 ﻿using SqlHelper.Extensions;
 using SqlHelper.Factories.DefaultTypeValue;
 using SqlHelper.Factories.TableAlias;
+using SqlHelper.Helpers;
 using SqlHelper.Models;
-using SqlHelper.Paths;
 
 namespace SqlHelper.Factories.SqlQuery
 {
@@ -55,7 +55,7 @@ namespace SqlHelper.Factories.SqlQuery
                 return index;
             };
 
-            result.EnumerateDepthFirst(pathInitiator, pathGenerator);
+            ResultRouteTreeHelpers.EnumerateTreeDepthFirst(result, pathInitiator, pathGenerator);
 
             // Prepare prefixes.
             var prefixes = new Dictionary<string, string>

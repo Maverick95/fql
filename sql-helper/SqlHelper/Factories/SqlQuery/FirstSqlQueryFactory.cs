@@ -2,7 +2,6 @@
 using SqlHelper.Factories.DefaultTypeValue;
 using SqlHelper.Factories.TableAlias;
 using SqlHelper.Models;
-using SqlHelper.Paths;
 
 namespace SqlHelper.Factories.SqlQuery
 {

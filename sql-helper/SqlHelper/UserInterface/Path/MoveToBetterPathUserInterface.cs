@@ -1,7 +1,6 @@
 ﻿using SqlHelper.Extensions;
 using SqlHelper.Helpers;
 using SqlHelper.Models;
-using SqlHelper.Paths;
 
 namespace SqlHelper.UserInterface.Path
 {
@@ -75,7 +74,7 @@ namespace SqlHelper.UserInterface.Path
                 return childDepth;
             };
             
-            path.EnumerateDepthFirst(pathInitiator, pathGenerator);
+            ResultRouteTreeHelpers.EnumerateTreeDepthFirst(path, pathInitiator, pathGenerator);
             
             var maxNameLength = writePathData
                 .SelectMany(data => new List<string> { data.table.Schema, data.table.Name })

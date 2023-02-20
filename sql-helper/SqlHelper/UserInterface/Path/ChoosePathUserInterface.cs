@@ -1,6 +1,6 @@
 ﻿using SqlHelper.Extensions;
 using SqlHelper.Helpers;
-using SqlHelper.Paths;
+using SqlHelper.Models;
 
 namespace SqlHelper.UserInterface.Path
 {

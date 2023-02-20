@@ -1,4 +1,5 @@
-﻿using SqlHelper.Models;
+﻿using SqlHelper.Helpers;
+using SqlHelper.Models;
 
 namespace SqlHelper.Paths
 {
@@ -132,7 +133,8 @@ namespace SqlHelper.Paths
                     tableId: tr);
             }
 
-            var trees = routes.Select(route => new ResultRouteTree(route))
+            var trees = routes
+                .Select(route => ResultRouteTreeHelpers.CreateTreeFromRoute(route))
                 .ToList();
             
             return trees;

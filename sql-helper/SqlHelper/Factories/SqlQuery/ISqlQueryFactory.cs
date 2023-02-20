@@ -1,5 +1,4 @@
 ﻿using SqlHelper.Models;
-using SqlHelper.Paths;
 
 namespace SqlHelper.Factories.SqlQuery
 {
