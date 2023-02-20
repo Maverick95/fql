@@ -4,6 +4,10 @@ namespace SqlHelper.Helpers
 {
     public static class ResultRouteTreeHelpers
     {
+        /*
+         * Try to test CreateTree functions instead of constructing trees by hand,
+         * except for in tests.
+         */ 
         public static ResultRouteTree CreateTreeFromTable(Table table)
         {
             return new ResultRouteTree
