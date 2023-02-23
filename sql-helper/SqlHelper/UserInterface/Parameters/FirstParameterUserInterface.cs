@@ -145,7 +145,7 @@ namespace SqlHelper.UserInterface.Parameters
                 _stream.WriteLine(option.Text);
             }
 
-            cleaned = _stream.Read().Clean();
+            cleaned = _stream.ReadLine().Clean();
             _stream.Padding();
 
             var selected = cleaned
@@ -256,7 +256,7 @@ namespace SqlHelper.UserInterface.Parameters
                 _stream.WriteLine(option.Text);
             }
 
-            cleaned = _stream.Read().Clean();
+            cleaned = _stream.ReadLine().Clean();
             _stream.Padding();
 
             var selected = cleaned
@@ -302,8 +302,8 @@ namespace SqlHelper.UserInterface.Parameters
 
             while (finished == false)
             {
-                _stream.WriteLine("Enter command (type 'h' or 'help' for options) :");
-                var input = _stream.Read();
+                _stream.Write("Enter command (type 'h' or 'help' for options) : ");
+                var input = _stream.ReadLine();
                 _stream.Padding();
                 var handled = false;
                 

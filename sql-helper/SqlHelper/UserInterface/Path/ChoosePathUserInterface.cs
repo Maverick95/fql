@@ -91,7 +91,7 @@ namespace SqlHelper.UserInterface.Path
             ResultRouteTree chosen_result = null;
             while (chosen_result is null)
             {
-                var input = _stream.Read();
+                var input = _stream.ReadLine();
                 
                 if (int.TryParse(input, out var id) == false) continue;
 

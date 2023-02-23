@@ -155,7 +155,7 @@ namespace SqlHelper.UserInterface.Path
                 UserChoice? choice = null;
                 while (choice is null)
                 {
-                    var input = _stream.Read();
+                    var input = _stream.ReadLine();
                     _stream.WriteLine("");
                     choice = Handler_UserChoice(input);
                 }

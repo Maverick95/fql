@@ -2,16 +2,22 @@
 {
     public interface IStream
     {
-        public string Read();
+        public string ReadLine();
+        public void Write(string content);
         public void WriteLine(string content);
         public void Padding(int lines = 1);
     }
 
     public class ConsoleStream: IStream
     {
-        public string Read()
+        public string ReadLine()
         {
             return Console.ReadLine();
+        }
+
+        public void Write(string content)
+        {
+            Console.Write(content);
         }
 
         public void WriteLine(string content)
