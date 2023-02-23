@@ -100,21 +100,7 @@ namespace SqlHelper.UserInterface.Parameters
                     Table = data.Tables[match.Key.TableId],
                     Column = match.Value,
                 })
-                .OrderBy(data =>
-                {
-                    (
-                        string column,
-                        string schema,
-                        string table
-                    ) order =
-                    (
-                        data.Column.Name,
-                        data.Table.Schema,
-                        data.Table.Name
-                    );
-
-                    return order;
-                });
+                .OrderBy(data => (data.Column.Name, data.Table.Schema, data.Table.Name));
 
             var schema_max_length =
                 options_data.Max(data => data.Table.Schema.Length);
@@ -139,12 +125,12 @@ namespace SqlHelper.UserInterface.Parameters
                     $"{option.Column.Name}",
             });
 
-            _stream.WriteLine("Enter comma-separated options, for example, to select options 1 and 2, enter '1,2' or '1, 2'");
             foreach (var option in options)
             {
                 _stream.WriteLine(option.Text);
             }
-
+            _stream.Padding();
+            _stream.Write("Enter comma-separated options, for example, to select options 1 and 2, enter '1,2' or '1, 2' : ");
             cleaned = _stream.ReadLine().Clean();
             _stream.Padding();
 
@@ -225,18 +211,7 @@ namespace SqlHelper.UserInterface.Parameters
 
             var options_data = matches
                 .Select(match => match.Value)
-                .OrderBy(table =>
-                {
-                    (
-                        string table,
-                        string schema
-                    ) order =
-                    (
-                        table.Name,
-                        table.Schema
-                    );
-                    return order;
-                });
+                .OrderBy(table => (table.Name, table.Schema));
 
             var schema_max_length =
                 options_data.Max(data => data.Schema.Length);
@@ -250,12 +225,12 @@ namespace SqlHelper.UserInterface.Parameters
                 Text = $"{id}".PadRight(id_space) + $"{option.Schema}.".PadRight(schema_space) + option.Name,
             });
 
-            _stream.WriteLine("Enter comma-separated options, for example, to select options 1 and 2, enter '1,2' or '1, 2'");
             foreach (var option in options)
             {
                 _stream.WriteLine(option.Text);
             }
-
+            _stream.Padding();
+            _stream.Write("Enter comma-separated options, for example, to select options 1 and 2, enter '1,2' or '1, 2' : ");
             cleaned = _stream.ReadLine().Clean();
             _stream.Padding();
 
