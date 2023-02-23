@@ -42,6 +42,7 @@ namespace SqlHelper.UserInterface.Path
             if (inputsMatchingChoices.TryGetValue(cleaned, out var choice))
                 return choice;
 
+            _stream.Write("Wrong choice, try again : ");
             return null;
         }
 
@@ -150,13 +151,14 @@ namespace SqlHelper.UserInterface.Path
                 };
 
                 Write_Path(current_path);
-                _stream.WriteLine("");
+                _stream.Padding();
+                _stream.Write("Enter choice, (n|next) = next path, (p|previous) = previous path, (c|current) = choose this path : ");
 
                 UserChoice? choice = null;
                 while (choice is null)
                 {
                     var input = _stream.ReadLine();
-                    _stream.WriteLine("");
+                    _stream.Padding();
                     choice = Handler_UserChoice(input);
                 }
 
