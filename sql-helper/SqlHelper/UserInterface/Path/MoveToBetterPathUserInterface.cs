@@ -117,13 +117,13 @@ namespace SqlHelper.UserInterface.Path
                         });
                 
                 var outputLines = string.Join("", outputData.Select(output => output.Arrow));
-                _stream.Write(outputLines);
+                _stream.WriteLine(outputLines);
 
                 var outputSchemas = string.Join("", outputData.Select(output => output.Schema));
-                _stream.Write(outputSchemas);
+                _stream.WriteLine(outputSchemas);
 
                 var outputNames = string.Join("", outputData.Select(output => output.Name));
-                _stream.Write(outputNames);
+                _stream.WriteLine(outputNames);
             }
         }
 
@@ -150,13 +150,13 @@ namespace SqlHelper.UserInterface.Path
                 };
 
                 Write_Path(current_path);
-                _stream.Write("");
+                _stream.WriteLine("");
 
                 UserChoice? choice = null;
                 while (choice is null)
                 {
                     var input = _stream.Read();
-                    _stream.Write("");
+                    _stream.WriteLine("");
                     choice = Handler_UserChoice(input);
                 }
 

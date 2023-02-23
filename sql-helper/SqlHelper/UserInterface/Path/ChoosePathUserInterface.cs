@@ -51,7 +51,7 @@ namespace SqlHelper.UserInterface.Path
 
             var ids = Enumerable.Range(1, results.Count());
 
-            _stream.Write("Select the path to use, for example, to select path 1, enter '1'");
+            _stream.WriteLine("Select the path to use, for example, to select path 1, enter '1'");
 
             var data = ids.Zip(results, (id, result) => new
             {
@@ -62,7 +62,7 @@ namespace SqlHelper.UserInterface.Path
             foreach (var d in data)
             {
                 // Path option number
-                _stream.Write(d.Id.ToString());
+                _stream.WriteLine(d.Id.ToString());
 
                 // Schemas
                 var child = d.Result.Children.First();
@@ -73,7 +73,7 @@ namespace SqlHelper.UserInterface.Path
                     .Select(schema => $"{schema}.".PadRight(name_space))
                     .Sentence(" -> ");
 
-                _stream.Write(schemas);
+                _stream.WriteLine(schemas);
 
                 // Tables
                 var tables = child.route.Route
@@ -83,9 +83,9 @@ namespace SqlHelper.UserInterface.Path
                     .Select(table => table.PadRight(name_space))
                     .Sentence("    ");
 
-                _stream.Write(tables);
+                _stream.WriteLine(tables);
 
-                _stream.Write(string.Empty);
+                _stream.WriteLine(string.Empty);
             }
 
             ResultRouteTree chosen_result = null;

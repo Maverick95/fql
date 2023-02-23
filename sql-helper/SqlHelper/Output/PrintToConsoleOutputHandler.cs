@@ -13,7 +13,7 @@ namespace SqlHelper.Output
 
         public void Handle(string output)
         {
-            _stream.Write(output);
+            _stream.WriteLine(output);
         }
     }
 }

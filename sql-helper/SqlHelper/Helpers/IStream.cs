@@ -3,7 +3,7 @@
     public interface IStream
     {
         public string Read();
-        public void Write(string content);
+        public void WriteLine(string content);
         public void Padding(int lines = 1);
     }
 
@@ -14,7 +14,7 @@
             return Console.ReadLine();
         }
 
-        public void Write(string content)
+        public void WriteLine(string content)
         {
             Console.WriteLine(content);
         }

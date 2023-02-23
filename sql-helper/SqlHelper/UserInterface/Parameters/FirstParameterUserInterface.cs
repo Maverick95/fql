@@ -29,7 +29,7 @@ namespace SqlHelper.UserInterface.Parameters
 
             if (help_commands.Contains(cleaned))
             {
-                _stream.Write("TODO : write help instructions lol rofl");
+                _stream.WriteLine("TODO : write help instructions lol rofl");
                 _stream.Padding();
                 return HandlerResult.NEXT_COMMAND;
             }
@@ -73,7 +73,7 @@ namespace SqlHelper.UserInterface.Parameters
 
             if (matches.Any() == false)
             {
-                _stream.Write("filter command contains no matches, please try again");
+                _stream.WriteLine("filter command contains no matches, please try again");
                 _stream.Padding();
                 return HandlerResult.NEXT_COMMAND;
             }
@@ -84,7 +84,7 @@ namespace SqlHelper.UserInterface.Parameters
                 var table = data.Tables[filter.TableId];
                 var filter_output = $"[{table.Schema}].[{table.Name}].[{filter.Name}]";
 
-                _stream.Write($"Adding 1 filters to the selection ({filter_output})");
+                _stream.WriteLine($"Adding 1 filters to the selection ({filter_output})");
                 _stream.Padding();
 
                 parameters.Filters = parameters.Filters
@@ -139,10 +139,10 @@ namespace SqlHelper.UserInterface.Parameters
                     $"{option.Column.Name}",
             });
 
-            _stream.Write("Enter comma-separated options, for example, to select options 1 and 2, enter '1,2' or '1, 2'");
+            _stream.WriteLine("Enter comma-separated options, for example, to select options 1 and 2, enter '1,2' or '1, 2'");
             foreach (var option in options)
             {
-                _stream.Write(option.Text);
+                _stream.WriteLine(option.Text);
             }
 
             cleaned = _stream.Read().Clean();
@@ -164,7 +164,7 @@ namespace SqlHelper.UserInterface.Parameters
                 })
                 .Sentence(", ", "none found");
 
-            _stream.Write($"Adding {selected.Count()} columns to the selection ({selected_output})");
+            _stream.WriteLine($"Adding {selected.Count()} columns to the selection ({selected_output})");
             _stream.Padding();
 
             parameters.Filters = parameters.Filters
@@ -200,7 +200,7 @@ namespace SqlHelper.UserInterface.Parameters
 
             if (matches.Any() == false)
             {
-                _stream.Write("table command contains no matches, please try again");
+                _stream.WriteLine("table command contains no matches, please try again");
                 _stream.Padding();
                 return HandlerResult.NEXT_COMMAND;
             }
@@ -210,7 +210,7 @@ namespace SqlHelper.UserInterface.Parameters
                 var table = matches.First().Value;
                 var table_output = $"[{table.Schema}].[{table.Name}]";
 
-                _stream.Write($"Adding 1 tables to the selection ({table_output})");
+                _stream.WriteLine($"Adding 1 tables to the selection ({table_output})");
                 _stream.Padding();
 
                 parameters.Tables = parameters.Tables
@@ -250,10 +250,10 @@ namespace SqlHelper.UserInterface.Parameters
                 Text = $"{id}".PadRight(id_space) + $"{option.Schema}.".PadRight(schema_space) + option.Name,
             });
 
-            _stream.Write("Enter comma-separated options, for example, to select options 1 and 2, enter '1,2' or '1, 2'");
+            _stream.WriteLine("Enter comma-separated options, for example, to select options 1 and 2, enter '1,2' or '1, 2'");
             foreach (var option in options)
             {
-                _stream.Write(option.Text);
+                _stream.WriteLine(option.Text);
             }
 
             cleaned = _stream.Read().Clean();
@@ -271,7 +271,7 @@ namespace SqlHelper.UserInterface.Parameters
                 .Select(table => $"[{table.Schema}].[{table.Name}]")
                 .Sentence(", ", "none found");
 
-            _stream.Write($"Adding {selected.Count()} tables to the selection ({selected_output})");
+            _stream.WriteLine($"Adding {selected.Count()} tables to the selection ({selected_output})");
             _stream.Padding();
 
             parameters.Tables = parameters.Tables
@@ -302,7 +302,7 @@ namespace SqlHelper.UserInterface.Parameters
 
             while (finished == false)
             {
-                _stream.Write("Enter command (type 'h' or 'help' for options) :");
+                _stream.WriteLine("Enter command (type 'h' or 'help' for options) :");
                 var input = _stream.Read();
                 _stream.Padding();
                 var handled = false;
@@ -320,7 +320,7 @@ namespace SqlHelper.UserInterface.Parameters
 
                 if (handled == false)
                 {
-                    _stream.Write("Command not found, please try again");
+                    _stream.WriteLine("Command not found, please try again");
                     _stream.Padding();
                 }
             }
