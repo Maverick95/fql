@@ -228,10 +228,11 @@ namespace SqlHelper.Paths
                     var routes = indices
                         .Select(i => results[i]);
 
+                    // Must contain at most 1 table that is NOT listed as the source for a distinct target.
                     var sourceTables = routes
+                        .Where(r => r.Start.Id != r.Route.Last().source.Id)
                         .Select(p => p.Route.Last().source.Id);
 
-                    // Valid results contain 0 or 1 tables that are NOT listed as a source.
                     var parentTableCount = tablesRequired
                         .GroupJoin(
                             sourceTables,
