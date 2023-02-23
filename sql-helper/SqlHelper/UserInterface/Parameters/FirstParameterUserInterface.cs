@@ -65,7 +65,7 @@ namespace SqlHelper.UserInterface.Parameters
             var lookups = cleaned
                 .Substring(match.Length)
                 .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                .Select(filter => new Regex($"^{filter}", RegexOptions.IgnoreCase));
+                .Select(filter => new Regex($"{filter}", RegexOptions.IgnoreCase));
 
             var matches = data.Columns
                 .Where(column => lookups.Any(
@@ -178,7 +178,7 @@ namespace SqlHelper.UserInterface.Parameters
             var lookups = cleaned
                 .Substring(match.Length)
                 .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                .Select(table => new Regex($"^{table}", RegexOptions.IgnoreCase));
+                .Select(table => new Regex($"{table}", RegexOptions.IgnoreCase));
 
             var matches = data.Tables
                 .Where(table => lookups.Any(
