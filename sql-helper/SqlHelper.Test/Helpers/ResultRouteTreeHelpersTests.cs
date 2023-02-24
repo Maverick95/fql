@@ -541,9 +541,28 @@ namespace SqlHelper.Test.Helpers
         {
             // ARRANGE
             /*
-                1 -> 2
+                1 -> 2 -> 4
                   -> 3
             */
+
+            /* GRANDCHILD */
+            var grandchild_route = new ResultRoute
+            {
+                Start = new() { Id = 2 },
+                Route = new List<(Table, Constraint)>
+                {
+                    (
+                        new() { Id = 4 },
+                        new() { Id = 103, TargetTableId = 2, SourceTableId = 4 }
+                    )
+                }
+            };
+
+            var grandchild_tree = new ResultRouteTree
+            {
+                Table = new() { Id = 4 },
+                Children = new List<(ResultRoute, ResultRouteTree)> { },
+            };
 
             /* 1st CHILD */
             var child_1_route = new ResultRoute
@@ -561,7 +580,10 @@ namespace SqlHelper.Test.Helpers
             var child_1_tree = new ResultRouteTree
             {
                 Table = new() { Id = 2 },
-                Children = new List<(ResultRoute, ResultRouteTree)> { },
+                Children = new List<(ResultRoute, ResultRouteTree)>
+                {
+                    ( grandchild_route, grandchild_tree ),
+                },
             };
 
             /* 2nd CHILD */
@@ -599,12 +621,16 @@ namespace SqlHelper.Test.Helpers
             var initiator_result = new TestClass { Id = 1001 };
             var generator_result_child_1 = new TestClass { Id = 1002 };
             var generator_result_child_2 = new TestClass { Id = 1003 };
+            var generator_result_grandchild = new TestClass { Id = 1004 };
 
             A.CallTo(() => initiator(master))
                 .Returns(initiator_result);
 
             A.CallTo(() => generator(initiator_result, child_1_route, child_1_tree))
                 .Returns(generator_result_child_1);
+
+            A.CallTo(() => generator(generator_result_child_1, grandchild_route, grandchild_tree))
+                .Returns(generator_result_grandchild);
 
             A.CallTo(() => generator(initiator_result, child_2_route, child_2_tree))
                 .Returns(generator_result_child_2);
@@ -617,6 +643,9 @@ namespace SqlHelper.Test.Helpers
                 .MustHaveHappenedOnceExactly()
                 .Then(
             A.CallTo(() => generator(initiator_result, child_1_route, child_1_tree))
+                .MustHaveHappenedOnceExactly())
+                .Then(
+            A.CallTo(() => generator(generator_result_child_1, grandchild_route, grandchild_tree))
                 .MustHaveHappenedOnceExactly())
                 .Then(
             A.CallTo(() => generator(initiator_result, child_2_route, child_2_tree))

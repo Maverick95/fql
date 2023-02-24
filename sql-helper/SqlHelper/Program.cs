@@ -73,7 +73,7 @@ namespace SqlHelper
             ISqlQueryFactory sqlQueryFactory = new MoveToBetterPrettierSqlQueryFactory(
                 new FullyQualifiedTableAliasFactory(),
                 new FirstDefaultTypeValueFactory(),
-                5);
+                padding: 5);
 
             IParameterUserInterface parameterUserInterface = new FirstParameterUserInterface(new ConsoleStream());
 

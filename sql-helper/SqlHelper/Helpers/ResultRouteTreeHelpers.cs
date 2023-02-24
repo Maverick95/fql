@@ -70,17 +70,21 @@ namespace SqlHelper.Helpers
             Func<ResultRouteTree, T> initiator,
             Func<T, ResultRoute, ResultRouteTree, T> generator)
         {
-            var elements_depth_first = new Stack<(ResultRouteTree, T)>();
-            var root = (master, initiator(master));
-            elements_depth_first.Push(root);
-
+            var elements_depth_first = new Stack<(T, ResultRoute, ResultRouteTree)>();
+            var firstTransform = initiator(master);
+            // This is a stack, so you want the last element pushed to be the first child
+            foreach (var child in master.Children.Reverse())
+            {
+                elements_depth_first.Push((firstTransform, child.route, child.child));
+            }
             while (elements_depth_first.Any())
             {
-                (var tree, var transform) = elements_depth_first.Pop();
-                foreach (var child in tree.Children)
+                (var transform, var route, var tree) = elements_depth_first.Pop();
+                var nextTransform = generator(transform, route, tree);
+                // This is a stack, so you want the last element pushed to be the first child
+                foreach (var child in tree.Children.Reverse())
                 {
-                    var next = (child.child, generator(transform, child.route, child.child));
-                    elements_depth_first.Push(next);
+                    elements_depth_first.Push((nextTransform, child.route, child.child));
                 }
             }
         }
