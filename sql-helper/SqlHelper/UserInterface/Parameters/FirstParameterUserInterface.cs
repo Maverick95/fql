@@ -78,22 +78,6 @@ namespace SqlHelper.UserInterface.Parameters
                 return HandlerResult.NEXT_COMMAND;
             }
 
-            if (matches.Count() == 1)
-            {
-                var filter = matches.First().Value;
-                var table = data.Tables[filter.TableId];
-                var filter_output = $"[{table.Schema}].[{table.Name}].[{filter.Name}]";
-
-                _stream.WriteLine($"Adding 1 filters to the selection ({filter_output})");
-                _stream.Padding();
-
-                parameters.Filters = parameters.Filters
-                    .UnionBy(new List<Column> { filter }, (filter) => (filter.TableId, filter.ColumnId))
-                    .ToList();
-
-                return HandlerResult.NEXT_COMMAND;
-            }
-
             var options_data = matches
                 .Select(match => new
                 {
@@ -188,21 +172,6 @@ namespace SqlHelper.UserInterface.Parameters
             {
                 _stream.WriteLine("table command contains no matches, please try again");
                 _stream.Padding();
-                return HandlerResult.NEXT_COMMAND;
-            }
-
-            if (matches.Count() == 1)
-            {
-                var table = matches.First().Value;
-                var table_output = $"[{table.Schema}].[{table.Name}]";
-
-                _stream.WriteLine($"Adding 1 tables to the selection ({table_output})");
-                _stream.Padding();
-
-                parameters.Tables = parameters.Tables
-                    .UnionBy(new List<Table> { table }, (table) => table.Id)
-                    .ToList();
-
                 return HandlerResult.NEXT_COMMAND;
             }
 
