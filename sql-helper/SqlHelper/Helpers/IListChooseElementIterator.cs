@@ -35,11 +35,9 @@
 
         public static IEnumerable<IList<int>> GetElementCombinationsWithChooseElements(int count, int choose)
         {
-            if (count < 0)
-                throw new ArgumentOutOfRangeException("count", "Must be >= 0");
+            if (count < 0) throw new ArgumentOutOfRangeException("count", "Must be >= 0");
 
-            if (choose < 0 || choose > count)
-                throw new ArgumentOutOfRangeException("choose", "Must be >= 0 and <= count");
+            if (choose < 0 || choose > count) throw new ArgumentOutOfRangeException("choose", "Must be >= 0 and <= count");
 
             if (count == 0 || choose == 0)
                 yield break;
