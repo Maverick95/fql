@@ -6,20 +6,17 @@ namespace SqlHelper.Extensions
     {
         public static string Sentence(this IEnumerable<string> words, string separator = "", string emptyValue = "")
         {
-            if (words is null)
-                throw new ArgumentNullException(nameof(words));
-            if (separator is null)
-                throw new ArgumentNullException(nameof(separator));
-            if (emptyValue is null)
-                throw new ArgumentNullException(nameof(emptyValue));
+            if (words is null) throw new ArgumentNullException(nameof(words));
+            if (separator is null) throw new ArgumentNullException(nameof(separator));
+            if (emptyValue is null) throw new ArgumentNullException(nameof(emptyValue));
 
             return words.Any() ? string.Join(separator, words) : emptyValue;
         }
 
         public static IEnumerable<string> AppendIndex(this IEnumerable<string> inputs, string separator = "_")
         {
-            if (inputs is null)
-                throw new ArgumentNullException(nameof(inputs));
+            if (inputs is null) throw new ArgumentNullException(nameof(inputs));
+            
             if (new Regex("\\D").IsMatch(separator) == false)
                 throw new ArgumentException("Numeric separator allows for duplicate results", nameof(separator));
 
