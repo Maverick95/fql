@@ -1,0 +1,31 @@
+{
+  "tables": {
+    "1": {
+      "id": 1,
+      "schema": "website",
+      "name": "customer"
+    },
+    "2": {
+      "id": 2,
+      "schema": "website",
+      "name": "customeraddress"
+    },
+    "3": {
+      "id": 3,
+      "schema": "website",
+      "name": "order"
+    },
+    "4": {
+      "id": 4,
+      "schema": "website",
+      "name": "item"
+    },
+    "5": {
+      "id": 5,
+      "schema": "website",
+      "name": "orderitem"
+    }
+  },
+  "columns": {},
+  "constraints": {}
+}

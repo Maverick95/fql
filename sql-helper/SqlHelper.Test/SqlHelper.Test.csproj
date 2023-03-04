@@ -27,4 +27,10 @@
     <ProjectReference Include="..\SqlHelper\SqlHelper.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="UserInterface\Parameters\TestData\DbData.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
