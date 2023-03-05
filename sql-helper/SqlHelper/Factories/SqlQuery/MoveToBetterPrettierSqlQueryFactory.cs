@@ -46,7 +46,6 @@ namespace SqlHelper.Factories.SqlQuery
                             .Select(index => (int?)index);
 
                     var new_data = new_data_tables.Zip(new_data_targetIndices, (table, index) => (table, index));
-
                     all_path_data.AddRange(new_data);
                 }
 
