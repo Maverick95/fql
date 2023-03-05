@@ -25,34 +25,33 @@ namespace SqlHelper.Factories.SqlQuery
         public string Generate(Models.DbData data, ResultRouteTree result, SqlQueryParameters parameters)
         {
             var all_path_data = new List<(Table table, int? index)>();
-            var index = 0;
             var child = new List<(Table source, Constraint constraint)>();
 
             var pathInitiator = (ResultRouteTree parentTree) =>
             {
                 all_path_data.Add((parentTree.Table, null));
-                index = 1;
                 return 0;
             };
 
             var pathGenerator = (int parentTargetIndex, ResultRoute childRoute, ResultRouteTree childTree) =>
             {
-                var new_data_tables = childRoute.Route.Select(route => route.source);
+                all_path_data.Add((childRoute.Route.First().source, parentTargetIndex));
 
-                var new_data_targetIndices = new List<int?> { parentTargetIndex };
                 if (childRoute.Route.Count > 1)
                 {
-                    new_data_targetIndices.AddRange(
-                        Enumerable.Range(index, childRoute.Route.Count - 1)
-                            .Select(index => (int?)index));
+                    var new_data_tables = childRoute.Route.Skip(1).Select(route => route.source);
+
+                    var new_data_firstTargetIndex = all_path_data.Count - 1;
+                    var new_data_targetIndices = Enumerable.Range(new_data_firstTargetIndex, childRoute.Route.Count - 1)
+                            .Select(index => (int?)index);
+
+                    var new_data = new_data_tables.Zip(new_data_targetIndices, (table, index) => (table, index));
+
+                    all_path_data.AddRange(new_data);
                 }
 
-                var new_data = new_data_tables.Zip(new_data_targetIndices, (table, index) => (table, index));
-
-                all_path_data.AddRange(new_data);
-                index = index + childRoute.Route.Count;
                 child.AddRange(childRoute.Route);
-                return index;
+                return all_path_data.Count - 1;
             };
 
             ResultRouteTreeHelpers.EnumerateTreeDepthFirst(result, pathInitiator, pathGenerator);
