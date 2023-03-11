@@ -14,6 +14,7 @@ namespace SqlHelper.Test.Factories.DbData
         public void Create_ShouldConstructGraphModel()
         {
             // ARRANGE
+            var mockQueryFactory = A.Fake<IDbQueryFactory>();
             var mockConnectionFactory = A.Fake<IDbConnectionFactory>();
             A.CallTo(() => mockConnectionFactory.Create()).Returns(A.Fake<IDbConnection>());
 
@@ -49,7 +50,7 @@ namespace SqlHelper.Test.Factories.DbData
 
             A.CallTo(() => mockCommandFactory.Create()).ReturnsNextFromSequence(mockCommandTables, mockCommandColumns, mockCommandConstraints);
 
-            var actualGraphFactory = new LocalSqlExpressDbDataFactory("test_database", mockConnectionFactory, mockCommandFactory);
+            var actualGraphFactory = new LocalSqlExpressDbDataFactory("test_database", mockQueryFactory, mockConnectionFactory, mockCommandFactory);
 
             var expected = new Models.DbData
             {
@@ -112,6 +113,7 @@ namespace SqlHelper.Test.Factories.DbData
         public void Create_ShouldConstructGraphModelWithMultiColumnConstraints()
         {
             // ARRANGE
+            var mockQueryFactory = A.Fake<IDbQueryFactory>();
             var mockConnectionFactory = A.Fake<IDbConnectionFactory>();
             A.CallTo(() => mockConnectionFactory.Create()).Returns(A.Fake<IDbConnection>());
 
@@ -147,7 +149,7 @@ namespace SqlHelper.Test.Factories.DbData
 
             A.CallTo(() => mockCommandFactory.Create()).ReturnsNextFromSequence(mockCommandTables, mockCommandColumns, mockCommandConstraints);
 
-            var actualGraphFactory = new LocalSqlExpressDbDataFactory("test_database", mockConnectionFactory, mockCommandFactory);
+            var actualGraphFactory = new LocalSqlExpressDbDataFactory("test_database", mockQueryFactory, mockConnectionFactory, mockCommandFactory);
 
             var expected = new Models.DbData
             {
