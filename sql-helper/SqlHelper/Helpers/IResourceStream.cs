@@ -14,7 +14,7 @@
         public void Write(string file, string content);
     }
 
-    public class AppFileStream: IResourceStream
+    public class AppFileResourceStream: IResourceStream
     {
         private const string _appFileDirectory = "data";
 
