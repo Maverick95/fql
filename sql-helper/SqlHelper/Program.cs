@@ -34,7 +34,7 @@ namespace SqlHelper
                 return;
             }
 
-            IDbDataFactory dbDataFactory = new LocalSqlExpressDbDataFactory(options.ConnectionString);
+            IDbDataFactory dbDataFactory = new ConnectionStringDbDataFactory(options.ConnectionString);
 
             IPathFinder pathFinder = new MoveToBetterPathFinder();
 
