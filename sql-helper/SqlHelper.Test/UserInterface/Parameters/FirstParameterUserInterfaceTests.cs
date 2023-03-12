@@ -30,7 +30,7 @@ namespace SqlHelper.Test.UserInterface.Parameters
             SqlQueryParameters expected_parameters)
         {
             // ARRANGE
-            var dbData = JsonSerializer.Deserialize<DbData>(File.ReadAllText("./UserInterface/Parameters/TestData/DbData.json"));
+            var dbData = JsonSerializer.Deserialize<DbData>(File.ReadAllText("./TestData/DbData.json"));
             A.CallTo(() => _mockStream.ReadLine()).ReturnsNextFromSequence(instructions.ToArray());
 
             // ACT
