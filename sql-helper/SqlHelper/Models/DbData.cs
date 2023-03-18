@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using SqlHelper.Helpers;
+using System.Text.Json.Serialization;
 
 namespace SqlHelper.Models
 {
@@ -12,6 +13,7 @@ namespace SqlHelper.Models
         public SortedDictionary<long, Constraint> Constraints { get; set; }
 
         [JsonPropertyName("columns")]
+        [JsonConverter(typeof(ColumnsJsonConverter))]
         public SortedDictionary<(long TableId, long ColumnId), Column> Columns { get; set; }
     }
 }

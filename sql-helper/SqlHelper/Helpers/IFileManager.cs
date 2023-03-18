@@ -29,6 +29,7 @@
     {
         public IEnumerable<string> List(string path)
         {
+            /* This also needs some work (guarding) */
             Directory.CreateDirectory(path);
             return Directory.EnumerateFiles(path);
         }
@@ -45,6 +46,9 @@
 
         public void Write(string path, string content)
         {
+            /* This probably needs some work */
+            var pathDir = Path.GetDirectoryName(path);
+            Directory.CreateDirectory(pathDir);
             File.WriteAllText(path, content);
         }
     }
