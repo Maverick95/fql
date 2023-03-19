@@ -9,6 +9,7 @@ namespace SqlHelper.Contexts
 
         private static IUniqueIdProvider _uniqueIdProvider;
         private static IConfigManager _configManager;
+        private static IStream _stream;
 
         static Context()
         {
@@ -20,6 +21,7 @@ namespace SqlHelper.Contexts
             _contextFactory = contextFactory;
             _uniqueIdProvider = null;
             _configManager = null;
+            _stream = null;
         }
 
         public static IUniqueIdProvider UniqueId
@@ -39,6 +41,16 @@ namespace SqlHelper.Contexts
                 if (_configManager is null)
                     _configManager = _contextFactory.CreateConfigManager();
                 return _configManager;
+            }
+        }
+
+        public static IStream Stream
+        {
+            get
+            {
+                if (_stream is null)
+                    _stream = _contextFactory.CreateStream();
+                return _stream;
             }
         }
     }

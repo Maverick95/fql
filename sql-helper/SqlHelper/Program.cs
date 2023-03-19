@@ -4,7 +4,6 @@ using SqlHelper.Factories.DbData;
 using SqlHelper.Factories.DefaultTypeValue;
 using SqlHelper.Factories.SqlQuery;
 using SqlHelper.Factories.TableAlias;
-using SqlHelper.Helpers;
 using SqlHelper.Models;
 using SqlHelper.Output;
 using SqlHelper.Paths;
@@ -16,14 +15,12 @@ namespace SqlHelper
     public class Program
     {
         static void Main(string[] args)
-        {
-            IStream stream = new ConsoleStream();
-            
+        {   
             var parserResult = Parser.Default.ParseArguments<Options>(args);
 
             if (parserResult.Tag is ParserResultType.NotParsed)
             {
-                stream.WriteLine("Failed to parse arguments. Exiting...");
+                Context.Stream.WriteLine("Failed to parse arguments. Exiting...");
                 return;
             }
 
@@ -31,7 +28,7 @@ namespace SqlHelper
 
             if (string.IsNullOrEmpty(options.ConnectionString) && string.IsNullOrEmpty(options.Alias))
             {
-                stream.WriteLine("Failed to supply Connection String or Alias. Exiting...");
+                Context.Stream.WriteLine("Failed to supply Connection String or Alias. Exiting...");
                 return;
             }
 
@@ -52,7 +49,7 @@ namespace SqlHelper
                 (var exists, data) = Context.Config.Read(options.Alias);
                 if (exists == false)
                 {
-                    stream.WriteLine("Failed to supply valid Alias. Exiting...");
+                    Context.Stream.WriteLine("Failed to supply valid Alias. Exiting...");
                     return;
                 }
             }
@@ -64,9 +61,9 @@ namespace SqlHelper
                 new FirstDefaultTypeValueFactory(),
                 padding: 5);
 
-            IParameterUserInterface parameterUserInterface = new FirstParameterUserInterface(stream);
-            IPathUserInterface pathUserInterface = new MoveToBetterPathUserInterface(stream);
-            IOutputHandler outputHandler = new PrintToConsoleOutputHandler(stream);
+            IParameterUserInterface parameterUserInterface = new FirstParameterUserInterface(Context.Stream);
+            IPathUserInterface pathUserInterface = new MoveToBetterPathUserInterface(Context.Stream);
+            IOutputHandler outputHandler = new PrintToConsoleOutputHandler(Context.Stream);
 
             var parameters = parameterUserInterface.GetParameters(data);
 

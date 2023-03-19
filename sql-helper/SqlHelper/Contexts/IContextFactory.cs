@@ -8,6 +8,8 @@ namespace SqlHelper.Contexts
         public IUniqueIdProvider CreateUniqueIdProvider();
 
         public IConfigManager CreateConfigManager();
+
+        public IStream CreateStream();
     }
 
     public class StandardContextFactory: IContextFactory
@@ -15,5 +17,7 @@ namespace SqlHelper.Contexts
         public IUniqueIdProvider CreateUniqueIdProvider() => new SequentialUniqueIdProvider();
 
         public IConfigManager CreateConfigManager() => new AppResourceConfigManager(new FileManager());
+
+        public IStream CreateStream() => new ConsoleStream();
     }
 }
