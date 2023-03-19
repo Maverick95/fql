@@ -1,5 +1,5 @@
 ﻿using CommandLine;
-using SqlHelper.Config;
+using SqlHelper.Contexts;
 using SqlHelper.Factories.DbData;
 using SqlHelper.Factories.DefaultTypeValue;
 using SqlHelper.Factories.SqlQuery;
@@ -18,9 +18,7 @@ namespace SqlHelper
         static void Main(string[] args)
         {
             IStream stream = new ConsoleStream();
-            IFileManager fileManager = new FileManager();
-            IConfigManager configManager = new AppResourceConfigManager(fileManager);
-
+            
             var parserResult = Parser.Default.ParseArguments<Options>(args);
 
             if (parserResult.Tag is ParserResultType.NotParsed)
@@ -46,12 +44,12 @@ namespace SqlHelper
 
                 if (string.IsNullOrEmpty(options.Alias) == false)
                 {
-                    configManager.Write(options.Alias, data);
+                    Context.Config.Write(options.Alias, data);
                 }
             }
             else
             {
-                (var exists, data) = configManager.Read(options.Alias);
+                (var exists, data) = Context.Config.Read(options.Alias);
                 if (exists == false)
                 {
                     stream.WriteLine("Failed to supply valid Alias. Exiting...");
