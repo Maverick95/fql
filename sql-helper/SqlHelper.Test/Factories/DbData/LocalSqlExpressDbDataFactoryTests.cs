@@ -82,6 +82,7 @@ namespace SqlHelper.Test.Factories.DbData
                     { 4, new()
                     {
                         Id = 4,
+                        IsCustom = false,
                         TargetTableId = 2,
                         SourceTableId = 1,
                         Columns = new List<ConstraintColumnPair>
@@ -96,6 +97,7 @@ namespace SqlHelper.Test.Factories.DbData
                     { 8, new()
                     {
                         Id = 8,
+                        IsCustom = false,
                         TargetTableId = 3,
                         SourceTableId = 2,
                         Columns = new List<ConstraintColumnPair>
@@ -191,6 +193,7 @@ namespace SqlHelper.Test.Factories.DbData
                     { 4, new()
                     {
                         Id = 4,
+                        IsCustom = false,
                         TargetTableId = 2,
                         SourceTableId = 1,
                         Columns = new List<ConstraintColumnPair>
@@ -205,6 +208,7 @@ namespace SqlHelper.Test.Factories.DbData
                     { 8, new()
                     {
                         Id = 8,
+                        IsCustom = false,
                         TargetTableId = 3,
                         SourceTableId = 2,
                         Columns = new List<ConstraintColumnPair>

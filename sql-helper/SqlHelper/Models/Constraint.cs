@@ -16,6 +16,9 @@ namespace SqlHelper.Models
         [JsonPropertyName("id")]
         public long Id { get; set; }
 
+        [JsonPropertyName("is_custom")]
+        public bool IsCustom { get; set; }
+
         [JsonPropertyName("target_table_id")]
         public long TargetTableId { get; set; }
 

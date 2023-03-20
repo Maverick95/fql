@@ -118,6 +118,7 @@ namespace SqlHelper.Factories.DbData
                         constraints.Add(uniqueIdFromProvider, new Models.Constraint
                         {
                             Id = uniqueIdFromProvider,
+                            IsCustom = false,
                             TargetTableId = targetTableId,
                             SourceTableId = sourceTableId,
                             Columns = new List<Models.ConstraintColumnPair>
