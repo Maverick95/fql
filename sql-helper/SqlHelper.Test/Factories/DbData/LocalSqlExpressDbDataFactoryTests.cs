@@ -18,6 +18,9 @@ namespace SqlHelper.Test.Factories.DbData
             var mockConnectionFactory = A.Fake<IDbConnectionFactory>();
             A.CallTo(() => mockConnectionFactory.Create()).Returns(A.Fake<IDbConnection>());
 
+            var mockUniqueIdProvider = A.Fake<IUniqueIdProvider>();
+            A.CallTo(() => mockUniqueIdProvider.Next()).ReturnsNextFromSequence(4, 8, 15, 16, 23, 42);
+
             var mockCommandFactory = A.Fake<IDbCommandFactory>();
 
             var mockCommandTables = A.Fake<IDbCommand>();
@@ -50,7 +53,12 @@ namespace SqlHelper.Test.Factories.DbData
 
             A.CallTo(() => mockCommandFactory.Create()).ReturnsNextFromSequence(mockCommandTables, mockCommandColumns, mockCommandConstraints);
 
-            var actualGraphFactory = new LocalSqlExpressDbDataFactory("test_database", mockQueryFactory, mockConnectionFactory, mockCommandFactory);
+            var actualGraphFactory = new LocalSqlExpressDbDataFactory(
+                "test_database",
+                mockUniqueIdProvider,
+                mockQueryFactory,
+                mockConnectionFactory,
+                mockCommandFactory);
 
             var expected = new Models.DbData
             {
@@ -71,9 +79,9 @@ namespace SqlHelper.Test.Factories.DbData
                 },
                 Constraints = new SortedDictionary<long, Models.Constraint>
                 {
-                    { 1, new()
+                    { 4, new()
                     {
-                        Id = 1,
+                        Id = 4,
                         TargetTableId = 2,
                         SourceTableId = 1,
                         Columns = new List<ConstraintColumnPair>
@@ -85,9 +93,9 @@ namespace SqlHelper.Test.Factories.DbData
                             }
                         }
                     } },
-                    { 2, new()
+                    { 8, new()
                     {
-                        Id = 2,
+                        Id = 8,
                         TargetTableId = 3,
                         SourceTableId = 2,
                         Columns = new List<ConstraintColumnPair>
@@ -116,6 +124,9 @@ namespace SqlHelper.Test.Factories.DbData
             var mockQueryFactory = A.Fake<IDbQueryFactory>();
             var mockConnectionFactory = A.Fake<IDbConnectionFactory>();
             A.CallTo(() => mockConnectionFactory.Create()).Returns(A.Fake<IDbConnection>());
+
+            var mockUniqueIdProvider = A.Fake<IUniqueIdProvider>();
+            A.CallTo(() => mockUniqueIdProvider.Next()).ReturnsNextFromSequence(4, 8, 15, 16, 23, 42);
 
             var mockCommandFactory = A.Fake<IDbCommandFactory>();
 
@@ -149,7 +160,12 @@ namespace SqlHelper.Test.Factories.DbData
 
             A.CallTo(() => mockCommandFactory.Create()).ReturnsNextFromSequence(mockCommandTables, mockCommandColumns, mockCommandConstraints);
 
-            var actualGraphFactory = new LocalSqlExpressDbDataFactory("test_database", mockQueryFactory, mockConnectionFactory, mockCommandFactory);
+            var actualGraphFactory = new LocalSqlExpressDbDataFactory(
+                "test_database",
+                mockUniqueIdProvider,
+                mockQueryFactory,
+                mockConnectionFactory,
+                mockCommandFactory);
 
             var expected = new Models.DbData
             {
@@ -172,9 +188,9 @@ namespace SqlHelper.Test.Factories.DbData
                 },
                 Constraints = new SortedDictionary<long, Models.Constraint>
                 {
-                    { 1, new()
+                    { 4, new()
                     {
-                        Id = 1,
+                        Id = 4,
                         TargetTableId = 2,
                         SourceTableId = 1,
                         Columns = new List<ConstraintColumnPair>
@@ -186,9 +202,9 @@ namespace SqlHelper.Test.Factories.DbData
                             }
                         }
                     } },
-                    { 2, new()
+                    { 8, new()
                     {
-                        Id = 2,
+                        Id = 8,
                         TargetTableId = 3,
                         SourceTableId = 2,
                         Columns = new List<ConstraintColumnPair>

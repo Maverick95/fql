@@ -36,7 +36,7 @@ namespace SqlHelper
 
             if (string.IsNullOrEmpty(options.ConnectionString) == false)
             {
-                IDbDataFactory dbDataFactory = new ConnectionStringDbDataFactory(options.ConnectionString);
+                IDbDataFactory dbDataFactory = new ConnectionStringDbDataFactory(options.ConnectionString, Context.UniqueIdProvider);
                 data = dbDataFactory.Create();
 
                 if (string.IsNullOrEmpty(options.Alias) == false)

@@ -5,6 +5,7 @@ namespace SqlHelper.Factories.DbData
     public class LocalSqlExpressDbDataFactory: IDbDataFactory
     {
         private readonly string _database;
+        private readonly IUniqueIdProvider _uniqueIdProvider;
         private readonly IDbQueryFactory _queryFactory;
         private readonly IDbConnectionFactory _connectionFactory;
         private readonly IDbCommandFactory _commandFactory;
@@ -16,11 +17,13 @@ namespace SqlHelper.Factories.DbData
 
         public LocalSqlExpressDbDataFactory(
             string database,
+            IUniqueIdProvider uniqueIdProvider,
             IDbQueryFactory queryFactory = null,
             IDbConnectionFactory connectionFactory = null,
             IDbCommandFactory commandFactory = null)
         {
             _database = database;
+            _uniqueIdProvider = uniqueIdProvider;
             _queryFactory = queryFactory ?? new FirstDbQueryFactory();
             _connectionFactory = connectionFactory ?? new SqlDbConnectionFactory();
             _commandFactory = commandFactory ?? new SqlDbTextCommandFactory(30);
@@ -30,6 +33,7 @@ namespace SqlHelper.Factories.DbData
         {
             var internalFactory = new ConnectionStringDbDataFactory(
                 _connectionString,
+                _uniqueIdProvider,
                 _queryFactory,
                 _connectionFactory,
                 _commandFactory);

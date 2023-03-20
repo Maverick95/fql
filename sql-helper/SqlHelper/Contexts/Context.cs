@@ -5,16 +5,11 @@ namespace SqlHelper.Contexts
 {
     public static class Context
     {
-        private static IContextFactory _contextFactory;
+        private static IContextFactory _contextFactory = new StandardContextFactory();
 
         private static IUniqueIdProvider _uniqueIdProvider;
         private static IConfigManager _configManager;
         private static IStream _stream;
-
-        static Context()
-        {
-            _contextFactory = new StandardContextFactory();
-        }
 
         public static void Use(IContextFactory contextFactory)
         {
@@ -24,7 +19,7 @@ namespace SqlHelper.Contexts
             _stream = null;
         }
 
-        public static IUniqueIdProvider UniqueId
+        public static IUniqueIdProvider UniqueIdProvider
         {
             get
             {
