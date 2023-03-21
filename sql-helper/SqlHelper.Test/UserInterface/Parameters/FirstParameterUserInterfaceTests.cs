@@ -4,6 +4,7 @@ using SqlHelper.Helpers;
 using SqlHelper.Models;
 using SqlHelper.Test.UserInterface.Parameters.TestData;
 using SqlHelper.UserInterface.Parameters;
+using SqlHelper.UserInterface.Parameters.Commands;
 using System.Text.Json;
 using Xunit;
 
@@ -19,7 +20,11 @@ namespace SqlHelper.Test.UserInterface.Parameters
         {
             _mockStream = A.Fake<IStream>();
             _loggerStream = new LoggerStream(_mockStream);
-            _parameterUserInterface = new FirstParameterUserInterface(_loggerStream);
+            _parameterUserInterface = new FirstParameterUserInterface(_loggerStream,
+                new AddFiltersCommandHandler(_loggerStream),
+                new AddTablesCommandHandler(_loggerStream),
+                new FinishCommandHandler(),
+                new HelpCommandHandler(_loggerStream));
         }
 
         [Theory]

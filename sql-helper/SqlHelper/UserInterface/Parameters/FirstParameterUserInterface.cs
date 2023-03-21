@@ -24,6 +24,7 @@ namespace SqlHelper.UserInterface.Parameters
             };
 
             var finished = false;
+            var notHandledInputCount = 0;
 
             while (finished == false)
             {
@@ -47,6 +48,15 @@ namespace SqlHelper.UserInterface.Parameters
                 {
                     _stream.WriteLine("Command not found, please try again");
                     _stream.Padding();
+                    if (++notHandledInputCount == 10)
+                    {
+                        _stream.WriteLine("Maximum number of incorrect commands hit, finishing...");
+                        finished = true;
+                    }
+                }
+                else
+                {
+                    notHandledInputCount = 0;
                 }
             }
 
