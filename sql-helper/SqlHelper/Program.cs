@@ -8,6 +8,7 @@ using SqlHelper.Models;
 using SqlHelper.Output;
 using SqlHelper.Paths;
 using SqlHelper.UserInterface.Parameters;
+using SqlHelper.UserInterface.Parameters.Commands;
 using SqlHelper.UserInterface.Path;
 
 namespace SqlHelper
@@ -61,7 +62,18 @@ namespace SqlHelper
                 new FirstDefaultTypeValueFactory(),
                 padding: 5);
 
-            IParameterUserInterface parameterUserInterface = new FirstParameterUserInterface(Context.Stream);
+            ICommandHandler
+                addFiltersCommandHandler = new AddFiltersCommandHandler(Context.Stream),
+                addTablesCommandHandler = new AddTablesCommandHandler(Context.Stream),
+                finishCommandHandler = new FinishCommandHandler(),
+                helpCommandHandler = new HelpCommandHandler(Context.Stream);
+
+            IParameterUserInterface parameterUserInterface = new FirstParameterUserInterface(Context.Stream,
+                addFiltersCommandHandler,
+                addTablesCommandHandler,
+                finishCommandHandler,
+                helpCommandHandler);
+
             IPathUserInterface pathUserInterface = new MoveToBetterPathUserInterface(Context.Stream);
             IOutputHandler outputHandler = new PrintToConsoleOutputHandler(Context.Stream);
 
