@@ -18,5 +18,8 @@ namespace SqlHelper.Models
 
         [JsonPropertyName("nullable")]
         public bool Nullable { get; set; }
+
+        [JsonPropertyName("is_primary_key")]
+        public bool IsPrimaryKey { get; set; }
     }
 }

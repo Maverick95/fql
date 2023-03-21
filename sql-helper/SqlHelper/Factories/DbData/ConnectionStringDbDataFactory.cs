@@ -70,6 +70,7 @@ namespace SqlHelper.Factories.DbData
                     var name = reader["Name"].ToString();
                     var type = reader["Type"].ToString();
                     var nullable = Convert.ToBoolean(reader["Nullable"]);
+                    var isPrimaryKey = Convert.ToBoolean(reader["IsPrimaryKey"]);
 
                     columns.Add((tableId, columnId), new Column
                     {
@@ -78,6 +79,7 @@ namespace SqlHelper.Factories.DbData
                         Name = name,
                         Type = type,
                         Nullable = nullable,
+                        IsPrimaryKey = isPrimaryKey,
                     });
                 }
             }

@@ -23,7 +23,22 @@
 				                ColumnId = ACO.column_id,
 				                [Name] = ACO.[name],
 				                [Type] = TYP.[name],
-				                Nullable = ACO.is_nullable
+				                Nullable = ACO.is_nullable,
+                                IsPrimaryKey =
+                                CASE
+                                    WHEN EXISTS
+                                    (
+                                        SELECT          *
+                                        FROM            [sys].[indexes] I
+                                        INNER JOIN      [sys].[index_columns] ICO
+                                            ON          ICO.[object_id] = I.[object_id]
+                                        AND             ICO.[index_id] = I.[index_id]
+                                        WHERE           I.[object_id] = TAB.[object_id]
+                                        AND             I.[is_primary_key] = 1
+                                        AND             ICO.[column_id] = ACO.[column_id]
+                                    ) THEN 1
+                                    ELSE 0
+                                END
                 FROM			[sys].[schemas] SCH
                 INNER JOIN		[sys].[database_principals] DPR
 	                ON			DPR.[principal_id] = SCH.[principal_id]

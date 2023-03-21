@@ -39,6 +39,7 @@ namespace SqlHelper.Test.Factories.DbData
             A.CallTo(() => mockReaderColumn["Name"]).ReturnsNextFromSequence("Id", "Name", "Id", "CustomerId", "Id", "OrderId");
             A.CallTo(() => mockReaderColumn["Type"]).ReturnsNextFromSequence("integer", "string", "long", "integer", "long", "long");
             A.CallTo(() => mockReaderColumn["Nullable"]).ReturnsNextFromSequence(false, true, false, true, false, false);
+            A.CallTo(() => mockReaderColumn["IsPrimaryKey"]).ReturnsNextFromSequence(true, false, true, false, true, false);
             A.CallTo(() => mockCommandColumns.ExecuteReader()).Returns(mockReaderColumn);
 
             var mockCommandConstraints = A.Fake<IDbCommand>();
@@ -70,12 +71,12 @@ namespace SqlHelper.Test.Factories.DbData
                 },
                 Columns = new SortedDictionary<(long TableId, long ColumnId), Column>
                 {
-                    { (1, 1), new() { TableId = 1, ColumnId = 1, Name = "Id", Type = "integer", Nullable = false } },
-                    { (1, 2), new() { TableId = 1, ColumnId = 2, Name = "Name", Type = "string", Nullable = true } },
-                    { (2, 1), new() { TableId = 2, ColumnId = 1, Name = "Id", Type = "long", Nullable = false } },
-                    { (2, 2), new() { TableId = 2, ColumnId = 2, Name = "CustomerId", Type = "integer", Nullable = true } },
-                    { (3, 1), new() { TableId = 3, ColumnId = 1, Name = "Id", Type = "long", Nullable = false } },
-                    { (3, 2), new() { TableId = 3, ColumnId = 2, Name = "OrderId", Type = "long", Nullable = false } },
+                    { (1, 1), new() { TableId = 1, ColumnId = 1, Name = "Id", Type = "integer", Nullable = false, IsPrimaryKey = true } },
+                    { (1, 2), new() { TableId = 1, ColumnId = 2, Name = "Name", Type = "string", Nullable = true, IsPrimaryKey = false } },
+                    { (2, 1), new() { TableId = 2, ColumnId = 1, Name = "Id", Type = "long", Nullable = false, IsPrimaryKey = true } },
+                    { (2, 2), new() { TableId = 2, ColumnId = 2, Name = "CustomerId", Type = "integer", Nullable = true, IsPrimaryKey = false } },
+                    { (3, 1), new() { TableId = 3, ColumnId = 1, Name = "Id", Type = "long", Nullable = false, IsPrimaryKey = true } },
+                    { (3, 2), new() { TableId = 3, ColumnId = 2, Name = "OrderId", Type = "long", Nullable = false, IsPrimaryKey = false } },
                 },
                 Constraints = new SortedDictionary<long, Models.Constraint>
                 {
@@ -148,6 +149,7 @@ namespace SqlHelper.Test.Factories.DbData
             A.CallTo(() => mockReaderColumn["Name"]).ReturnsNextFromSequence("Id", "Name", "Id", "CustomerId", "OrderDate", "Id", "OrderId", "OrderDate");
             A.CallTo(() => mockReaderColumn["Type"]).ReturnsNextFromSequence("integer", "string", "long", "integer", "date", "long", "long", "date");
             A.CallTo(() => mockReaderColumn["Nullable"]).ReturnsNextFromSequence(false, true, false, true, false, false, false, false);
+            A.CallTo(() => mockReaderColumn["IsPrimaryKey"]).ReturnsNextFromSequence(true, false, true, false, false, true, false, false);
             A.CallTo(() => mockCommandColumns.ExecuteReader()).Returns(mockReaderColumn);
 
             var mockCommandConstraints = A.Fake<IDbCommand>();
@@ -179,14 +181,14 @@ namespace SqlHelper.Test.Factories.DbData
                 },
                 Columns = new SortedDictionary<(long TableId, long ColumnId), Column>
                 {
-                    { (1, 1), new() { TableId = 1, ColumnId = 1, Name = "Id", Type = "integer", Nullable = false } },
-                    { (1, 2), new() { TableId = 1, ColumnId = 2, Name = "Name", Type = "string", Nullable = true } },
-                    { (2, 1), new() { TableId = 2, ColumnId = 1, Name = "Id", Type = "long", Nullable = false } },
-                    { (2, 2), new() { TableId = 2, ColumnId = 2, Name = "CustomerId", Type = "integer", Nullable = true } },
-                    { (2, 3), new() { TableId = 2, ColumnId = 3, Name = "OrderDate", Type = "date", Nullable = false } },
-                    { (3, 1), new() { TableId = 3, ColumnId = 1, Name = "Id", Type = "long", Nullable = false } },
-                    { (3, 2), new() { TableId = 3, ColumnId = 2, Name = "OrderId", Type = "long", Nullable = false } },
-                    { (3, 3), new() { TableId = 3, ColumnId = 3, Name = "OrderDate", Type = "date", Nullable = false } },
+                    { (1, 1), new() { TableId = 1, ColumnId = 1, Name = "Id", Type = "integer", Nullable = false, IsPrimaryKey = true } },
+                    { (1, 2), new() { TableId = 1, ColumnId = 2, Name = "Name", Type = "string", Nullable = true, IsPrimaryKey = false } },
+                    { (2, 1), new() { TableId = 2, ColumnId = 1, Name = "Id", Type = "long", Nullable = false, IsPrimaryKey = true } },
+                    { (2, 2), new() { TableId = 2, ColumnId = 2, Name = "CustomerId", Type = "integer", Nullable = true, IsPrimaryKey = false } },
+                    { (2, 3), new() { TableId = 2, ColumnId = 3, Name = "OrderDate", Type = "date", Nullable = false, IsPrimaryKey = false } },
+                    { (3, 1), new() { TableId = 3, ColumnId = 1, Name = "Id", Type = "long", Nullable = false, IsPrimaryKey = true } },
+                    { (3, 2), new() { TableId = 3, ColumnId = 2, Name = "OrderId", Type = "long", Nullable = false, IsPrimaryKey = false } },
+                    { (3, 3), new() { TableId = 3, ColumnId = 3, Name = "OrderDate", Type = "date", Nullable = false, IsPrimaryKey = false } },
                 },
                 Constraints = new SortedDictionary<long, Models.Constraint>
                 {
