@@ -13,7 +13,7 @@ namespace SqlHelper.UserInterface.Parameters.Commands
             _stream = stream;
         }
 
-        public (HandlerResult result, SqlQueryParameters parameters) TryCommandHandle(string input, DbData data, SqlQueryParameters parameters)
+        public (HandlerResult result, DbData data, SqlQueryParameters parameters) TryCommandHandle(string input, DbData data, SqlQueryParameters parameters)
         {
             var cleaned = input.Clean();
             var help_commands = new string[] { "h", "help" };
@@ -22,10 +22,10 @@ namespace SqlHelper.UserInterface.Parameters.Commands
             {
                 _stream.WriteLine("TODO : write help instructions lol rofl");
                 _stream.Padding();
-                return (HandlerResult.NEXT_COMMAND, parameters);
+                return (HandlerResult.NEXT_COMMAND, data, parameters);
             }
 
-            return (HandlerResult.NEXT_HANDLER, parameters);
+            return (HandlerResult.NEXT_HANDLER, data, parameters);
         }
     }
 }

@@ -4,6 +4,6 @@ namespace SqlHelper.UserInterface.Parameters
 {
     public interface IParameterUserInterface
     {
-        public SqlQueryParameters GetParameters(DbData data);
+        public (DbData data, SqlQueryParameters parameters) GetParameters(DbData data);
     }
 }

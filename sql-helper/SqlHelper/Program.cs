@@ -13,7 +13,7 @@ using SqlHelper.UserInterface.Path;
 
 namespace SqlHelper
 {
-    public class Program
+    public static class Program
     {
         static void Main(string[] args)
         {   
@@ -77,7 +77,7 @@ namespace SqlHelper
             IPathUserInterface pathUserInterface = new MoveToBetterPathUserInterface(Context.Stream);
             IOutputHandler outputHandler = new PrintToConsoleOutputHandler(Context.Stream);
 
-            var parameters = parameterUserInterface.GetParameters(data);
+            (data, var parameters) = parameterUserInterface.GetParameters(data);
 
             var tables = parameters.Tables
                 .Select(table => table.Id)

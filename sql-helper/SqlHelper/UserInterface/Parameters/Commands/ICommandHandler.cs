@@ -11,6 +11,6 @@ namespace SqlHelper.UserInterface.Parameters.Commands
 
     public interface ICommandHandler
     {
-        public (HandlerResult result, SqlQueryParameters parameters) TryCommandHandle(string input, DbData data, SqlQueryParameters parameters);
+        public (HandlerResult result, DbData data, SqlQueryParameters parameters) TryCommandHandle(string input, DbData data, SqlQueryParameters parameters);
     }
 }

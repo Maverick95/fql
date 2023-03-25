@@ -15,7 +15,7 @@ namespace SqlHelper.UserInterface.Parameters
             _commandHandlers = commandHandlers.ToList();
         }
 
-        public SqlQueryParameters GetParameters(DbData data)
+        public (DbData data, SqlQueryParameters parameters) GetParameters(DbData data)
         {
             var parameters = new SqlQueryParameters
             {
@@ -35,7 +35,7 @@ namespace SqlHelper.UserInterface.Parameters
                 
                 foreach (var handler in _commandHandlers)
                 {
-                    (var result, parameters) = handler.TryCommandHandle(input, data, parameters);
+                    (var result, data, parameters) = handler.TryCommandHandle(input, data, parameters);
                     finished = result == HandlerResult.FINISH;
                     if (result != HandlerResult.NEXT_HANDLER)
                     {
@@ -60,7 +60,7 @@ namespace SqlHelper.UserInterface.Parameters
                 }
             }
 
-            return parameters;
+            return (data, parameters);
         }
     }
 }

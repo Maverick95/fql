@@ -14,7 +14,7 @@ namespace SqlHelper.UserInterface.Parameters.Commands
             _stream = stream;
         }
 
-        public (HandlerResult result, SqlQueryParameters parameters) TryCommandHandle(string input, DbData data, SqlQueryParameters parameters)
+        public (HandlerResult result, DbData data, SqlQueryParameters parameters) TryCommandHandle(string input, DbData data, SqlQueryParameters parameters)
         {
             const int padding = 3;
 
@@ -24,7 +24,7 @@ namespace SqlHelper.UserInterface.Parameters.Commands
 
             if (match.Success == false)
             {
-                return (HandlerResult.NEXT_HANDLER, parameters);
+                return (HandlerResult.NEXT_HANDLER, data, parameters);
             }
 
             var lookups = cleaned
@@ -40,7 +40,7 @@ namespace SqlHelper.UserInterface.Parameters.Commands
             {
                 _stream.WriteLine("table command contains no matches, please try again");
                 _stream.Padding();
-                return (HandlerResult.NEXT_COMMAND, parameters);
+                return (HandlerResult.NEXT_COMMAND, data, parameters);
             }
 
             var id_space = matches.Count().ToString().Length + padding;
@@ -86,11 +86,15 @@ namespace SqlHelper.UserInterface.Parameters.Commands
             _stream.WriteLine($"Adding {selected.Count()} tables to the selection ({selected_output})");
             _stream.Padding();
 
-            parameters.Tables = parameters.Tables
-                .UnionBy(selected, (table) => table.Id)
-                .ToList();
+            var new_parameters = new SqlQueryParameters
+            {
+                Filters = parameters.Filters,
+                Tables = parameters.Tables
+                    .UnionBy(selected, (table) => table.Id)
+                    .ToList(),
+            };
 
-            return (HandlerResult.NEXT_COMMAND, parameters);
+            return (HandlerResult.NEXT_COMMAND, data, new_parameters);
         }
     }
 }
