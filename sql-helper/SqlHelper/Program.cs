@@ -65,12 +65,19 @@ namespace SqlHelper
             ICommandHandler
                 addFiltersCommandHandler = new AddFiltersCommandHandler(Context.Stream),
                 addTablesCommandHandler = new AddTablesCommandHandler(Context.Stream),
+                addCustomConstraintsCommandHandler = new AddCustomConstraintsCommandHandler(
+                    Context.UniqueIdProvider,
+                    Context.Stream,
+                    Context.Config,
+                    !string.IsNullOrEmpty(options.Alias),
+                    options.Alias),
                 finishCommandHandler = new FinishCommandHandler(),
                 helpCommandHandler = new HelpCommandHandler(Context.Stream);
 
             IParameterUserInterface parameterUserInterface = new FirstParameterUserInterface(Context.Stream,
                 addFiltersCommandHandler,
                 addTablesCommandHandler,
+                addCustomConstraintsCommandHandler,
                 finishCommandHandler,
                 helpCommandHandler);
 
