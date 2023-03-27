@@ -1,5 +1,6 @@
 ﻿using SqlHelper.Helpers;
 using SqlHelper.Models;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
@@ -16,10 +17,20 @@ namespace SqlHelper.Config
             _fileManager = fileManager;
         }
 
+        private string AppDirectory
+        {
+            get
+            {
+                var exeAsmPath = Assembly.GetExecutingAssembly().Location;
+                var exeAsmDirectory = Path.GetDirectoryName(exeAsmPath);
+                
+                return exeAsmDirectory;
+            }
+        }
+
         public IEnumerable<string> List()
         {
-            var wd = Directory.GetCurrentDirectory();
-            var path = Path.Combine(wd, _dataSubPath);
+            var path = Path.Combine(AppDirectory, _dataSubPath);
             /* Assumption is that the \ character is used to separate directories */
             var rgxFileName = new Regex(@"^\\?([^\\]*)\.json$");
 
@@ -34,8 +45,7 @@ namespace SqlHelper.Config
 
         public (bool, DbData) Read(string alias)
         {
-            var wd = Directory.GetCurrentDirectory();
-            var path = Path.Combine(wd, _dataSubPath, $"{alias}.json");
+            var path = Path.Combine(AppDirectory, _dataSubPath, $"{alias}.json");
             var (exists, content) = _fileManager.Read(path);
             if (exists)
             {
@@ -47,8 +57,7 @@ namespace SqlHelper.Config
 
         public void Write(string alias, DbData data)
         {
-            var wd = Directory.GetCurrentDirectory();
-            var path = Path.Combine(wd, _dataSubPath, $"{alias}.json");
+            var path = Path.Combine(AppDirectory, _dataSubPath, $"{alias}.json");
             var content = JsonSerializer.Serialize(data);
             _fileManager.Write(path, content);
         }
