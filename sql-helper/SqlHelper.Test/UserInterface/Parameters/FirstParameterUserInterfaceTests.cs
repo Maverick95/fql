@@ -39,7 +39,7 @@ namespace SqlHelper.Test.UserInterface.Parameters
             A.CallTo(() => _mockStream.ReadLine()).ReturnsNextFromSequence(instructions.ToArray());
 
             // ACT
-            var actual_parameters = _parameterUserInterface.GetParameters(dbData);
+            (_, var actual_parameters) = _parameterUserInterface.GetParameters(dbData);
             var actual_logs = _loggerStream.Logs;
 
             // ASSERT

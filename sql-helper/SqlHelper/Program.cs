@@ -4,6 +4,7 @@ using SqlHelper.Factories.DbData;
 using SqlHelper.Factories.DefaultTypeValue;
 using SqlHelper.Factories.SqlQuery;
 using SqlHelper.Factories.TableAlias;
+using SqlHelper.Helpers;
 using SqlHelper.Models;
 using SqlHelper.Output;
 using SqlHelper.Paths;
@@ -15,6 +16,14 @@ namespace SqlHelper
 {
     public static class Program
     {
+        private enum SaveDbDataToAliasAction
+        {
+            NONE,
+            MERGE_ALIAS,
+            NEW_ALIAS,
+            OVERRIDE_ALIAS,
+        }
+
         static void Main(string[] args)
         {   
             var parserResult = Parser.Default.ParseArguments<Options>(args);
@@ -38,21 +47,91 @@ namespace SqlHelper
             if (string.IsNullOrEmpty(options.ConnectionString) == false)
             {
                 IDbDataFactory dbDataFactory = new ConnectionStringDbDataFactory(options.ConnectionString, Context.UniqueIdProvider);
-                data = dbDataFactory.Create();
+                var dataFromConnection = dbDataFactory.Create();
 
                 if (string.IsNullOrEmpty(options.Alias) == false)
                 {
-                    Context.Config.Write(options.Alias, data);
+                    var optionsToActions = new List<(bool, SaveDbDataToAliasAction)>
+                    {
+                        (options.IsMergeAliasOptionSupplied, SaveDbDataToAliasAction.MERGE_ALIAS),
+                        (options.IsNewAliasOptionSupplied, SaveDbDataToAliasAction.NEW_ALIAS),
+                        (options.IsOverrideAliasOptionSupplied, SaveDbDataToAliasAction.OVERRIDE_ALIAS),
+                    };
+
+                    SaveDbDataToAliasAction action = SaveDbDataToAliasAction.NONE;
+
+                    foreach(var oa in optionsToActions)
+                    {
+                        if (action is not SaveDbDataToAliasAction.NONE && oa.Item1)
+                        {
+                            Context.Stream.WriteLine("Only one option allowed when Alias and Connection String supplied. Exiting...");
+                            return;
+                        }
+                        if (oa.Item1)
+                        {
+                            action = oa.Item2;
+                        }
+                    }
+
+                    if (action is SaveDbDataToAliasAction.NONE)
+                    {
+                        Context.Stream.WriteLine("Option required when Alias and Connection String supplied. Exiting...");
+                        return;
+                    }
+
+                    switch (action)
+                    {
+                        case SaveDbDataToAliasAction.MERGE_ALIAS:
+                            {
+                                (var exists, var dataFromAlias) = Context.Config.Read(options.Alias);
+                                if (exists == false)
+                                {
+                                    Context.Stream.WriteLine("Option supplied for Merge Alias with non-existing Alias. Exiting...");
+                                }
+                                dataFromConnection = DbDataHelpers.TryMergeDbDataCustomConstraints(
+                                    dataFromAlias,
+                                    dataFromConnection,
+                                    Context.UniqueIdProvider);
+                                Context.Config.Write(options.Alias, dataFromConnection);
+                            }
+                            break;
+                        case SaveDbDataToAliasAction.NEW_ALIAS:
+                            {
+                                (var exists, _) = Context.Config.Read(options.Alias);
+                                if (exists)
+                                {
+                                    Context.Stream.WriteLine("Option supplied for New Alias with existing Alias. Exiting...");
+                                    return;
+                                }
+                                Context.Config.Write(options.Alias, dataFromConnection);
+                            }
+                            break;
+                        case SaveDbDataToAliasAction.OVERRIDE_ALIAS:
+                            {
+                                (var exists, _) = Context.Config.Read(options.Alias);
+                                if (exists == false)
+                                {
+                                    Context.Stream.WriteLine("Option supplied for Override Alias with non-existing Alias. Exiting...");
+                                    return;
+                                }
+                                Context.Config.Write(options.Alias, dataFromConnection);
+                            }
+                            break;
+                    }
                 }
+
+                data = dataFromConnection;
             }
             else
             {
-                (var exists, data) = Context.Config.Read(options.Alias);
+                (var exists, var dataFromAlias) = Context.Config.Read(options.Alias);
                 if (exists == false)
                 {
                     Context.Stream.WriteLine("Failed to supply valid Alias. Exiting...");
                     return;
                 }
+
+                data = dataFromAlias;
             }
 
             IPathFinder pathFinder = new MoveToBetterPathFinder();
