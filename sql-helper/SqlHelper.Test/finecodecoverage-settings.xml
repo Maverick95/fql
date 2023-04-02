@@ -10,5 +10,10 @@
 		**/Helpers/ILocation.cs
 		**/Helpers/IStream.cs
 		**/Factories/DefaultTypeValue/IDefaultTypeValueFactory.cs
+		**/Helpers/IFileManager.cs
+		**/Helpers/IDbConnectionFactory.cs
+		**/Helpers/IDbCommandFactory.cs
+		**/Output/PrintToConsoleOutputHandler.cs
+		**/Output/SendToClipboardOutputHandler.cs
 	</ExcludeByFile>
 </FineCodeCoverage>
