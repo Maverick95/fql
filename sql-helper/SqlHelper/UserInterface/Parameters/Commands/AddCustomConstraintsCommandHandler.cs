@@ -129,12 +129,12 @@ namespace SqlHelper.UserInterface.Parameters.Commands
                 _stream.WriteLine(option.Text);
             }
             _stream.Padding();
-            _stream.Write("Enter comma-separated options, for example, to select options 1 and 2, enter '1,2' or '1, 2' : ");
+            _stream.Write("Enter selection(s) : ");
             cleaned = _stream.ReadLine().Clean();
             _stream.Padding();
 
             var selected = cleaned
-                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                 .Join(
                     options,
                     input => input,
