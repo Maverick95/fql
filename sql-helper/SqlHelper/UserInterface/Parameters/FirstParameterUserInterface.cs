@@ -28,7 +28,7 @@ namespace SqlHelper.UserInterface.Parameters
 
             while (finished == false)
             {
-                _stream.Write("Enter command (type 'h' or 'help' for options) : ");
+                _stream.Write("> ");
                 var input = _stream.ReadLine();
                 _stream.Padding();
                 var handled = false;
