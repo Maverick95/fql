@@ -58,7 +58,7 @@
             _includePadding = includePadding;
         }
 
-        public void Padding(int lines)
+        public void Padding(int lines = 1)
         {
             _internalStream.Padding(lines);
             if (_includePadding)

@@ -5,5 +5,10 @@
 	<ExcludeByFile>
 		**/Contexts/IContextFactory.cs
 		**/Contexts/Context.cs
+		**/Factories/DbData/FirstDbQueryFactory.cs
+		**/Program.cs
+		**/Helpers/ILocation.cs
+		**/Helpers/IStream.cs
+		**/Factories/DefaultTypeValue/IDefaultTypeValueFactory.cs
 	</ExcludeByFile>
 </FineCodeCoverage>

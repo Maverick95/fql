@@ -13,7 +13,6 @@ namespace SqlHelper.Helpers
 
         public string Location()
         {
-
             var exeAsmPath = Assembly.GetExecutingAssembly().Location;
             var exeAsmDirectory = Path.GetDirectoryName(exeAsmPath);
             var location = Path.Combine(exeAsmDirectory, _dataSubPath);
