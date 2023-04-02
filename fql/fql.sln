@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlHelper", "SqlHelper\SqlHelper.csproj", "{2E4207C5-C69B-4AAE-BA18-4FDCDCC57125}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "fql", "SqlHelper\fql.csproj", "{2E4207C5-C69B-4AAE-BA18-4FDCDCC57125}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlHelper.Test", "SqlHelper.Test\SqlHelper.Test.csproj", "{037A3FA4-BB3B-4431-8C06-E3216593C4D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "fql.Test", "SqlHelper.Test\fql.Test.csproj", "{037A3FA4-BB3B-4431-8C06-E3216593C4D5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
