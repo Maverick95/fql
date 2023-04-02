@@ -17,6 +17,9 @@ namespace SqlHelper.Models
         public bool IsNewAliasOptionSupplied { get; set; }
 
         [Option('o', "override")]
-        public bool IsOverrideAliasOptionSupplied { get; set; }        
+        public bool IsOverrideAliasOptionSupplied { get; set; }
+
+        [Option('p', "print")]
+        public bool IsPrintQueryOptionSupplied { get; set; }
     }
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using TextCopy;
 
 namespace SqlHelper.Output
 {
@@ -11,8 +6,7 @@ namespace SqlHelper.Output
     {
         public void Handle(string output)
         {
-            
-
+            ClipboardService.SetText(output);
         }
     }
 }

@@ -161,7 +161,9 @@ namespace SqlHelper
                 helpCommandHandler);
 
             IPathUserInterface pathUserInterface = new MoveToBetterPathUserInterface(Context.Stream);
-            IOutputHandler outputHandler = new PrintToConsoleOutputHandler(Context.Stream);
+            IOutputHandler outputHandler = options.IsPrintQueryOptionSupplied ?
+                new PrintToConsoleOutputHandler(Context.Stream) :
+                new SendToClipboardOutputHandler();
 
             (data, var parameters) = parameterUserInterface.GetParameters(data);
 
