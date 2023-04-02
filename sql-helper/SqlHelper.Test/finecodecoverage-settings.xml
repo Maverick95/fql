@@ -1,0 +1,9 @@
+﻿<FineCodeCoverage>
+	<Enabled>
+		True
+	</Enabled>
+	<ExcludeByFile>
+		**/Contexts/IContextFactory.cs
+		**/Contexts/Context.cs
+	</ExcludeByFile>
+</FineCodeCoverage>
