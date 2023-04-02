@@ -50,16 +50,19 @@ namespace SqlHelper.UserInterface.Parameters.Commands
                 .Select(match => match.Value)
                 .OrderBy(table => (table.Name, table.Schema));
 
-            var schema_max_length =
-                options_data.Max(data => data.Schema.Length);
+            var table_max_length =
+                options_data.Max(data => data.Name.Length);
 
-            var schema_space = schema_max_length + padding + 1; // Extra space for the . separator
+            var table_space = table_max_length + padding;
 
             var options = ids.Zip(options_data, (id, option) => new
             {
                 Id = id,
                 Table = option,
-                Text = $"{id}".PadRight(id_space) + $"{option.Schema}.".PadRight(schema_space) + option.Name,
+                Text =
+                    $"{id}".PadRight(id_space) +
+                    $"{option.Name}".PadRight(table_space) +
+                    $"{option.Schema}",
             });
 
             foreach (var option in options)
