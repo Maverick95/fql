@@ -1,6 +1,5 @@
 ﻿using SqlHelper.Helpers;
 using SqlHelper.Models;
-using System.Reflection;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
@@ -9,28 +8,17 @@ namespace SqlHelper.Config
     public class AppResourceConfigManager : IConfigManager
     {
         private readonly IFileManager _fileManager;
+        private readonly ILocation _location;
 
-        private const string _dataSubPath = "data";
-
-        public AppResourceConfigManager(IFileManager fileManager)
+        public AppResourceConfigManager(IFileManager fileManager, ILocation location)
         {
             _fileManager = fileManager;
-        }
-
-        private string AppDirectory
-        {
-            get
-            {
-                var exeAsmPath = Assembly.GetExecutingAssembly().Location;
-                var exeAsmDirectory = Path.GetDirectoryName(exeAsmPath);
-                
-                return exeAsmDirectory;
-            }
+            _location = location;
         }
 
         public IEnumerable<string> List()
         {
-            var path = Path.Combine(AppDirectory, _dataSubPath);
+            var path = _location.Location();
             /* Assumption is that the \ character is used to separate directories */
             var rgxFileName = new Regex(@"^\\?([^\\]*)\.json$");
 
@@ -45,7 +33,7 @@ namespace SqlHelper.Config
 
         public (bool, DbData) Read(string alias)
         {
-            var path = Path.Combine(AppDirectory, _dataSubPath, $"{alias}.json");
+            var path = Path.Combine(_location.Location(), $"{alias}.json");
             var (exists, content) = _fileManager.Read(path);
             if (exists)
             {
@@ -57,7 +45,7 @@ namespace SqlHelper.Config
 
         public void Write(string alias, DbData data)
         {
-            var path = Path.Combine(AppDirectory, _dataSubPath, $"{alias}.json");
+            var path = Path.Combine(_location.Location(), $"{alias}.json");
             var content = JsonSerializer.Serialize(data);
             _fileManager.Write(path, content);
         }

@@ -16,7 +16,7 @@ namespace SqlHelper.Contexts
     {
         public IUniqueIdProvider CreateUniqueIdProvider() => new SequentialUniqueIdProvider();
 
-        public IConfigManager CreateConfigManager() => new AppResourceConfigManager(new FileManager());
+        public IConfigManager CreateConfigManager() => new AppResourceConfigManager(new FileManager(), new AppResourceConfigLocation());
 
         public IStream CreateStream() => new ConsoleStream();
     }

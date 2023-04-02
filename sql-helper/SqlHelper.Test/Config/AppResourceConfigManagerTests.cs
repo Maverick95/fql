@@ -9,28 +9,31 @@ namespace SqlHelper.Test.Config
     public class AppResourceConfigManagerTests
     {
         private readonly IFileManager _mockFileManager;
+        private readonly ILocation _mockLocation;
         private readonly AppResourceConfigManager _configManager;
+
+        private const string _location = @"C:\test";
 
         public AppResourceConfigManagerTests()
         {
             _mockFileManager = A.Fake<IFileManager>();
-            _configManager = new AppResourceConfigManager(_mockFileManager);
+            _mockLocation = A.Fake<ILocation>();
+            A.CallTo(() => _mockLocation.Location()).Returns(_location);
+            _configManager = new AppResourceConfigManager(_mockFileManager, _mockLocation);
         }
-
 
         [Fact]
         public void List_ShouldReturnJsonFilesOnly()
         {
             // ARRANGE
-            var wd = Directory.GetCurrentDirectory();
             var files = new List<string>
             {
-                $"{wd}\\data\\test1.json",
-                $"{wd}\\data\\test2.json",
-                $"{wd}\\data\\test3.txt",
-                $"{wd}\\data\\test4.txt",
+                @"C:\test\test1.json",
+                @"C:\test\test2.json",
+                @"C:\test\test3.txt",
+                @"C:\test\test4.txt",
             };
-            A.CallTo(() => _mockFileManager.List(A<string>._)).Returns(files);
+            A.CallTo(() => _mockFileManager.List(@"C:\test")).Returns(files);
 
             var expected = new List<string>
             {
@@ -52,13 +55,13 @@ namespace SqlHelper.Test.Config
             var wd = Directory.GetCurrentDirectory();
             var files = new List<string>
             {
-                $"{wd}\\data\\test1.json",
-                $"{wd}\\data\\test2.json",
-                $"{wd}\\data\\sub-folder-1\\test3.json",
-                $"{wd}\\data\\sub-folder-2\\test4.json",
-                $"{wd}\\data\\test5.json"
+                @"C:\test\test1.json",
+                @"C:\test\test2.json",
+                @"C:\test\sub-folder-1\test3.json",
+                @"C:\test\sub-folder-2\test4.json",
+                @"C:\test\test5.json"
             };
-            A.CallTo(() => _mockFileManager.List(A<string>._)).Returns(files);
+            A.CallTo(() => _mockFileManager.List(@"C:\test")).Returns(files);
 
             var expected = new List<string>
             {
