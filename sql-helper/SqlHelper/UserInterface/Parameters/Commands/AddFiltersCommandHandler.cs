@@ -51,14 +51,14 @@ namespace SqlHelper.UserInterface.Parameters.Commands
                 })
                 .OrderBy(data => (data.Column.Name, data.Table.Schema, data.Table.Name));
 
+            var column_max_length =
+                options_data.Max(data => data.Column.Name.Length);
+
             var schema_max_length =
                 options_data.Max(data => data.Table.Schema.Length);
 
-            var table_max_length =
-                options_data.Max(data => data.Table.Name.Length);
-
+            var column_space = column_max_length + padding;
             var schema_space = schema_max_length + padding + 1; // Extra space for the . separator
-            var table_space = table_max_length + padding + 1; // Extra space for the . separator
 
             var id_space = matches.Count().ToString().Length + padding;
             var ids = Enumerable.Range(1, matches.Count());
@@ -69,9 +69,9 @@ namespace SqlHelper.UserInterface.Parameters.Commands
                 Column = option.Column,
                 Text =
                     $"{id}".PadRight(id_space) +
+                    $"{option.Column.Name}".PadRight(column_space) +
                     $"{option.Table.Schema}.".PadRight(schema_space) +
-                    $"{option.Table.Name}.".PadRight(table_space) +
-                    $"{option.Column.Name}",
+                    $"{option.Table.Name}",
             });
 
             foreach (var option in options)
