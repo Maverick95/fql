@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SqlHelper\fql.csproj" />
+    <ProjectReference Include="..\fql\fql.csproj" />
   </ItemGroup>
 
   <ItemGroup>
