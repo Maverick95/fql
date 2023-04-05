@@ -23,8 +23,7 @@ namespace SqlHelper.Test.UserInterface.Parameters
             _parameterUserInterface = new FirstParameterUserInterface(_loggerStream,
                 new AddFiltersCommandHandler(_loggerStream),
                 new AddTablesCommandHandler(_loggerStream),
-                new FinishCommandHandler(),
-                new HelpCommandHandler(_loggerStream));
+                new FinishCommandHandler());
         }
 
         [Theory]

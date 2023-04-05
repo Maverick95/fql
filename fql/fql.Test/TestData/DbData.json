@@ -1,31 +1,193 @@
 {
+
   "tables": {
+
     "1": {
       "id": 1,
       "schema": "website",
       "name": "customer"
     },
+
     "2": {
       "id": 2,
       "schema": "website",
       "name": "customeraddress"
     },
+
     "3": {
       "id": 3,
       "schema": "website",
       "name": "order"
     },
+
     "4": {
       "id": 4,
       "schema": "website",
       "name": "item"
     },
+
     "5": {
       "id": 5,
       "schema": "website",
       "name": "orderitem"
+    },
+
+    "6": {
+      "id": 6,
+      "schema": "website",
+      "name": "addresstype"
     }
+
   },
+
   "constraints": {},
-  "columns": {}
+
+  "columns": {
+
+    "(1,1)": {
+      "table_id": 1,
+      "column_id": 1,
+      "name": "CustomerID",
+      "type": "bigint",
+      "nullable": false,
+      "is_primary_key": true
+    },
+
+    "(1,2)": {
+      "table_id": 1,
+      "column_id": 2,
+      "name": "Forename",
+      "type": "nvarchar",
+      "nullable": true,
+      "is_primary_key": false
+    },
+
+    "(1,3)": {
+      "table_id": 1,
+      "column_id": 3,
+      "name": "Surname",
+      "type": "nvarchar",
+      "nullable": true,
+      "is_primary_key": false
+    },
+
+    "(1,4)": {
+      "table_id": 1,
+      "column_id": 4,
+      "name": "Email",
+      "type": "nvarchar",
+      "nullable": true,
+      "is_primary_key": false
+    },
+
+    "(2,1)": {
+      "table_id": 2,
+      "column_id": 1,
+      "name": "CustomerID",
+      "type": "bigint",
+      "nullable": false,
+      "is_primary_key": true
+    },
+
+    "(2,2)": {
+      "table_id": 2,
+      "column_id": 2,
+      "name": "AddressTypeID",
+      "type": "bigint",
+      "nullable": false,
+      "is_primary_key": true
+    },
+
+    "(2,3)": {
+      "table_id": 2,
+      "column_id": 3,
+      "name": "Address1",
+      "type": "varchar",
+      "nullable": true,
+      "is_primary_key": false
+    },
+
+    "(2,4)": {
+      "table_id": 2,
+      "column_id": 4,
+      "name": "Address2",
+      "type": "varchar",
+      "nullable": true,
+      "is_primary_key": false
+    },
+
+    "(2,5)": {
+      "table_id": 2,
+      "column_id": 5,
+      "name": "Address3",
+      "type": "varchar",
+      "nullable": true,
+      "is_primary_key": false
+    },
+
+    "(2,6)": {
+      "table_id": 2,
+      "column_id": 6,
+      "name": "Postcode",
+      "type": "varchar",
+      "nullable": true,
+      "is_primary_key": false
+    },
+
+    "(3,1)": {
+      "table_id": 3,
+      "column_id": 1,
+      "name": "OrderID",
+      "type": "bigint",
+      "nullable": false,
+      "is_primary_key": true
+    },
+
+    "(3,2)": {
+      "table_id": 3,
+      "column_id": 2,
+      "name": "CustomerID",
+      "type": "bigint",
+      "nullable": false,
+      "is_primary_key": false
+    },
+
+    "(3,3)": {
+      "table_id": 3,
+      "column_id": 3,
+      "name": "OrderDate",
+      "type": "datetime2",
+      "nullable": false,
+      "is_primary_key": false
+    },
+
+    "(6,1)": {
+      "table_id": 6,
+      "column_id": 1,
+      "name": "AddressTypeID",
+      "type": "bigint",
+      "nullable": false,
+      "is_primary_key": true
+    },
+
+    "(6,2)": {
+      "table_id": 6,
+      "column_id": 2,
+      "name": "ParentTypeID",
+      "type": "bigint",
+      "nullable": true,
+      "is_primary_key": false
+    },
+
+    "(6,3)": {
+      "table_id": 6,
+      "column_id": 3,
+      "name": "Description",
+      "type": "nvarchar",
+      "nullable": true,
+      "is_primary_key": false
+    }
+
+  }
+
 }

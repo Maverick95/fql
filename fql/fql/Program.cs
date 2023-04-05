@@ -150,15 +150,13 @@ namespace SqlHelper
                     Context.Config,
                     !string.IsNullOrEmpty(options.Alias),
                     options.Alias),
-                finishCommandHandler = new FinishCommandHandler(),
-                helpCommandHandler = new HelpCommandHandler(Context.Stream);
+                finishCommandHandler = new FinishCommandHandler();
 
             IParameterUserInterface parameterUserInterface = new FirstParameterUserInterface(Context.Stream,
                 addFiltersCommandHandler,
                 addTablesCommandHandler,
                 addCustomConstraintsCommandHandler,
-                finishCommandHandler,
-                helpCommandHandler);
+                finishCommandHandler);
 
             IPathUserInterface pathUserInterface = new MoveToBetterPathUserInterface(Context.Stream);
             IOutputHandler outputHandler = options.IsPrintQueryOptionSupplied ?
