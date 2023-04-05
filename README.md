@@ -28,7 +28,7 @@ It operates on the idea that most of the work in writing a SQL query involves sp
 
 ## Command-line options
 
-`fql [{-a | --alias} ALIAS] [{-c | --connection-string} CONNECTION_STRING] [{-n | --new} | {-o | --override} | {-m | --merge}] [{-p | --print}]`
+`fql [{-c | --connection-string} CONNECTION_STRING] [{-a | --alias} ALIAS] [{-n | --new} | {-o | --override} | {-m | --merge}] [{-p | --print}]`
 
 ### Connecting string only
 
@@ -41,6 +41,7 @@ Retrieves a database layout using connecting string **my_connecting_string**
 `fql -a my_alias`
 
 Retrieves a database layout stored under alias **my_alias**
+You will mostly use this form. 
 
 ### Connection string and alias
 
