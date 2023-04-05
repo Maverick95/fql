@@ -129,7 +129,7 @@ namespace SqlHelper.UserInterface.Parameters.Commands
                 _stream.WriteLine(option.Text);
             }
             _stream.Padding();
-            _stream.Write("Enter selection(s) : ");
+            _stream.Write("> ");
             cleaned = _stream.ReadLine().Clean();
             _stream.Padding();
 

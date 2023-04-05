@@ -152,7 +152,7 @@ namespace SqlHelper.UserInterface.Path
 
                 Write_Path(current_path);
                 _stream.Padding();
-                _stream.Write("Enter choice : ");
+                _stream.Write("> ");
 
                 UserChoice? choice = null;
                 while (choice is null)
