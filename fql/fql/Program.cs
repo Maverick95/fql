@@ -84,14 +84,13 @@ namespace SqlHelper
                         case SaveDbDataToAliasAction.MERGE_ALIAS:
                             {
                                 (var exists, var dataFromAlias) = Context.Config.Read(options.Alias);
-                                if (exists == false)
+                                if (exists)
                                 {
-                                    Context.Stream.WriteLine("Option supplied for Merge Alias with non-existing Alias. Exiting...");
+                                    dataFromConnection = DbDataHelpers.TryMergeDbDataCustomConstraints(
+                                        dataFromAlias,
+                                        dataFromConnection,
+                                        Context.UniqueIdProvider);
                                 }
-                                dataFromConnection = DbDataHelpers.TryMergeDbDataCustomConstraints(
-                                    dataFromAlias,
-                                    dataFromConnection,
-                                    Context.UniqueIdProvider);
                                 Context.Config.Write(options.Alias, dataFromConnection);
                             }
                             break;
@@ -108,12 +107,6 @@ namespace SqlHelper
                             break;
                         case SaveDbDataToAliasAction.OVERRIDE_ALIAS:
                             {
-                                (var exists, _) = Context.Config.Read(options.Alias);
-                                if (exists == false)
-                                {
-                                    Context.Stream.WriteLine("Option supplied for Override Alias with non-existing Alias. Exiting...");
-                                    return;
-                                }
                                 Context.Config.Write(options.Alias, dataFromConnection);
                             }
                             break;
