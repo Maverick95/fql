@@ -28,7 +28,7 @@ It operates on the idea that most of the work in writing a SQL query involves sp
 
 ## Command-line options
 
-`fql [{-c | --connection-string} CONNECTION_STRING] [{-a | --alias} ALIAS] [{-n | --new} | {-o | --override} | {-m | --merge}] [{-p | --print}]`
+`fql [{-c | --connection-string} CONNECTION_STRING] [{-a | --alias} ALIAS] [{--new | -n} | {--override | -o} | {--merge | -m}] [{--print | -p}]`
 
 ### Connecting string only
 
