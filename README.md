@@ -143,11 +143,53 @@ Retrieves a layout using connection string, and stores the layout under an alias
 
 # Custom Constraints
 
-fql is built upon constraints
+fql is built upon constraints. Constraints are the Foreign Keys from your layout.
 
-Once fql loads and the command prompt has appeared
+When you build a query, I mentioned that "all valid paths are considered".
 
-### Oh and the print option
+In fql, a "valid path" can be thought of as a set of constraints that link all the tables required.
 
-By default, fql will copy the resulting query to the clipboard, but if you want to output it to the console window instead,
-supply the `{-p | --print}` option.
+The problem is, sometimes useful constraints can be missing from your layout. Foreign Keys don't always exist between fields that represent the same things. fql by default relies on your layout for the constraints... it doesn't automatically "fill in the blanks", because this would be a nightmare. Imagine if there were constraints linking all integer fields called "Id", or all string fields called "Description".
+
+However fql lets you add a Custom Constraint from the available list.
+
+Custom Constraints have the same properties as Foreign Keys -
+
+1. There is a Source / Target table,
+2. There can't be an existing constraint, custom or otherwise, with the same Source / Target table,
+3. The Target table contains equivalent fields spanning the Source table's Primary Key, based on field name and type.
+
+Once fql loads and the command prompt has appeared, you can view potential Custom Constraints anytime. 
+
+`{constraint|c]`
+
+This returns a numbered list of available Custom Constraints.
+
+When the command prompt appears again, enter a space-separated list of numbers for the Custom Constraints to add to your layout.
+
+## If you are running fql with an alias
+
+The Custom Constraint will immediately be included in the layout stored under the alias.
+
+## If you are running fql with just a connection string
+
+The Custom Constraint will be included in your layout, but will be lost once you finish.
+
+## This is great, but what do I do with this?
+
+Just add all the Custom Constraints to an alias that you find useful in building queries.
+
+Even if the real database structure changes over time, you can pull these changes using the **merge** option, and still keep your Custom Constraints (if they still apply... fql silently discards the Custom Constraint forever otherwise).
+
+# Oh and the print option
+
+By default, fql will copy your query to the clipboard, but if you want to display it in the console window instead, supply the `{--print|-p}` option.
+
+# WTF, I didn't get any output
+
+After building your query, you may receive this output -
+
+`No output to generate! Your choices left no options to choose from.`
+
+`There can only be one table that has no link on it's primary field(s).`
+
