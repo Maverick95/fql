@@ -3,21 +3,17 @@
 
 # Motivation
 
-My motivation is that writing SQL is a massive pain.
+My motivation is that SQL is great, but writing SQL is a pain. Why?
 
-Why? Oh the reasons.
+1. As a developer, you normally work with the same database layouts again and again,
 
-1. As a developer, you normally work with a small number of database designs.
+2. Most work will be querying test / client data in a Development / Production environment,
 
-2. Most SQL work is querying test / client data in a Development / Production environment.
+3. This work tends to use the same or similar queries,
 
-3. You tend to write the same or similar SQL queries.
+4. These queries will be logically simple,
 
-4. These queries will be fairly simple and consist of SELECTs, JOINs and WHEREs
-
-5. These queries feel like you're writing boilerplate
-
-6. The auto-complete tools tend to get in your way
+5. They make you feel like you're writing repetitive boiler-plate, even though you know how your database holds together,
 
 # Solution
 
