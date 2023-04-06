@@ -168,7 +168,7 @@ namespace SqlHelper
             if (paths.Any() == false)
             {
                 Context.Stream.WriteLine("No output to generate! Your choices left no options to choose from.");
-                Context.Stream.WriteLine("There can only be one table that has no link on it's primary field(s).");
+                Context.Stream.WriteLine("There can only be one table that has no link on its primary field(s).");
                 Context.Stream.Padding();
                 return;
             }

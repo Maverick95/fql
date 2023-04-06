@@ -185,7 +185,35 @@ By default, fql will copy your query to the clipboard, but if you want to displa
 
 After building your query, you may receive this output -
 
-`No output to generate! Your choices left no options to choose from.`
+`No output to generate! Your choices left no options to choose from.
+There can only be one table that has no link on its primary field(s).`
 
-`There can only be one table that has no link on it's primary field(s).`
+This is best explained with an example.
 
+Imagine your layout had 3 tables.
+
+**website.CUSTOMER**  
+***CustomerId***  
+CustomerName
+
+**website.ORDER**  
+OrderId  
+***CustomerId***  
+OrderDate  
+OrderCost  
+
+**website.CUSTOMER_ADDRESS**  
+CustomerAddressId  
+***CustomerId***  
+AddressType  
+Address  
+
+**dbo.CUSTOMER** is the Source table in 2 constraints, one with the Target table **dbo.ORDER**, one with the Target table **dbo.CUSTOMER_ADDRESS**.
+
+What if you tried to build a query that required both **dbo.ORDER** and **dbo.CUSTOMER_ADDRESS**?
+
+In the simple world of fql, this would produce duplicated data. The data will also be non-sensical in many contexts. fql does not like these sort of queries.
+
+This is the reason for the "No output to generate!" message. Only **one** table is allowed to **not** be the Source table in a constraint used to build your query. In the above example, **website.ORDER** and **website.CUSTOMER_ADDRESS** satisfy this. Requiring both tables to build your query is therefore invalid.
+
+One way to fix this is to add the field ***CustomerAddressId*** to **website.ORDER**, and a constraint linking **website.ORDER** to **website.CUSTOMER_ADDRESS**. You have probably done this already. I'm just assuming your database sucks for the purposes of this example.
