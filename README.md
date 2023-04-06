@@ -41,7 +41,7 @@ Once fql loads, the command prompt will appear.
 
 ## Add tables to the output
 
-`table SEARCH_TERM_1[ SEARCH_TERM_2[ SEARCH_TERM_3[ ... ]]]`
+`{table|t} SEARCH_TERM_1[ SEARCH_TERM_2[ SEARCH_TERM_3[ ... ]]]`
 
 This returns a numbered list of tables from the layout with names matching any of the search terms.
 
@@ -57,7 +57,7 @@ When the command prompt appears again, enter a space-separated list of numbers f
 
 ## Add filters to the output
 
-`filter SEARCH_TERM_1[ SEARCH_TERM_2[ SEARCH_TERM_3[ ... ]]]`
+`{filter|f} SEARCH_TERM_1[ SEARCH_TERM_2[ SEARCH_TERM_3[ ... ]]]`
 
 This returns a numbered list of fields from the layout with names matching any of the search terms.
 
@@ -69,7 +69,7 @@ When the command prompt appears again, enter a space-separated list of numbers f
 
 Once you are done adding tables and filters, execute the path finder.
 
-`execute`
+`{execute|exec|e}`
 
 The path finder, as the name suggests, finds all the available paths.
 
@@ -83,15 +83,15 @@ If there is more than one valid path available, you need to choose.
 
 The first path will be printed to the console in an understandable format, followed by the command prompt.
 
-`next` shows the next path
+`{next|n}` shows the next path
 
-`previous` shows the previous path
+`{previous|p}` shows the previous path
 
-`current` chooses the path currently being shown
+`{current|c}` chooses the path currently being shown
 
 There could be many valid paths to choose from. fql will show the least-complex paths first, as you are likely to choose these.
 
-Once you have entered `current` to choose a path, fql copies your query to the clipboard and exits.
+Once you have chosen a path, fql copies your query to the clipboard and exits.
 
 ## Well done!
 
@@ -99,7 +99,7 @@ You've used fql for the first time. You can paste your query to something like S
 
 # Full specification
 
-`fql [{--connection-string | -c} $CONNECTION_STRING] [{--alias | -a} $ALIAS] [{--new | -n} | {--override | -o} | {--merge | -m}] [{--print | -p}]`
+`fql [{--connection-string|-c} $CONNECTION_STRING] [{--alias|-a} $ALIAS] [{--new|-n}|{--override|-o}|{--merge|-m}] [{--print|-p}]`
 
 Here are all the ways you can run fql. I use the longer option names for descriptive purposes. Don't use these. Why do you hate yourself?
 
