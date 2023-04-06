@@ -161,21 +161,17 @@ Custom Constraints have the same properties as Foreign Keys -
 
 Once fql loads and the command prompt has appeared, you can view potential Custom Constraints anytime. 
 
-`{constraint|c]`
+`{constraint|c}`
 
 This returns a numbered list of available Custom Constraints.
 
 When the command prompt appears again, enter a space-separated list of numbers for the Custom Constraints to add to your layout.
 
-## If you are running fql with an alias
+**If you are running fql with an alias**, the Custom Constraint will immediately be included in the layout stored under the alias.
 
-The Custom Constraint will immediately be included in the layout stored under the alias.
+**If you are running fql with just a connection string**, the Custom Constraint will be included in your layout, but will be lost once you finish.
 
-## If you are running fql with just a connection string
-
-The Custom Constraint will be included in your layout, but will be lost once you finish.
-
-## This is great, but what do I do with this?
+## This is great, but what can I do with this?
 
 Just add all the Custom Constraints to an alias that you find useful in building queries.
 
