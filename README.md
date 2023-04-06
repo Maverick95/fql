@@ -181,7 +181,7 @@ Even if the real database structure changes over time, you can pull these change
 
 By default, fql will copy your query to the clipboard, but if you want to display it in the console window instead, supply the `{--print|-p}` option.
 
-# WTF, I didn't get any output
+# WTF I didn't get any output
 
 After building your query, you may receive this output -
 
