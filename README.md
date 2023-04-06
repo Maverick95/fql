@@ -208,7 +208,7 @@ Address
 
 What if you tried to build a query that required both **website.ORDER** and **website.CUSTOMER_ADDRESS**?
 
-In the simple world of fql, this would produce duplicated data. The data will also be non-sensical in many contexts. fql does not like these sort of queries.
+In the simple world of fql, this would produce duplicated data, since you would JOIN from **website.CUSTOMER** onto **both** tables. The data will also be non-sensical in many contexts. fql does not like these sort of queries.
 
 This is the reason for the "No output to generate!" message. Only **one** table is allowed to **not** be the Source table in a constraint used to build your query. In the above example, **website.ORDER** and **website.CUSTOMER_ADDRESS** satisfy this. Requiring both tables to build your query is therefore invalid.
 
