@@ -204,9 +204,9 @@ CustomerAddressId
 AddressType  
 Address  
 
-**dbo.CUSTOMER** is the Source table in 2 constraints, one with the Target table **dbo.ORDER**, one with the Target table **dbo.CUSTOMER_ADDRESS**.
+**website.CUSTOMER** is the Source table in 2 constraints, one with the Target table **website.ORDER**, one with the Target table **website.CUSTOMER_ADDRESS**.
 
-What if you tried to build a query that required both **dbo.ORDER** and **dbo.CUSTOMER_ADDRESS**?
+What if you tried to build a query that required both **website.ORDER** and **website.CUSTOMER_ADDRESS**?
 
 In the simple world of fql, this would produce duplicated data. The data will also be non-sensical in many contexts. fql does not like these sort of queries.
 
