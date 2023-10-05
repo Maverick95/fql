@@ -50,8 +50,8 @@ namespace SqlHelper.UserInterface.Parameters.Commands
                 .Where(column => column.IsPrimaryKey)
                 .Join(
                     columns,
-                    c1 => new { c1.Name, c1.Type },
-                    c2 => new { c2.Name, c2.Type },
+                    c1 => new { Name = c1.Name.ToLowerInvariant(), c1.Type },
+                    c2 => new { Name = c2.Name.ToLowerInvariant(), c2.Type },
                     (c1, c2) => new { SourceColumn = c1, TargetColumn = c2 }
                     )
                 // We are looking for matches across tables
