@@ -1,14 +1,7 @@
-﻿using SqlHelper.Models;
+﻿using fql.UserInterface.Choices.Models;
 
 namespace fql.UserInterface.Choices.Formatters
 {
-    public class CustomConstraintChoice
-    {
-        public Constraint Constraint { get; set; }
-        public Table SourceTable { get; set; }
-        public Table TargetTable { get; set; }
-    }
-
     public class CustomConstraintChoiceFormatter : IChoiceFormatter<CustomConstraintChoice>
     {
         private readonly int _padding;

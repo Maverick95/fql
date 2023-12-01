@@ -1,6 +1,7 @@
 ﻿using FakeItEasy;
 using FluentAssertions;
 using fql.UserInterface.Choices.Formatters;
+using fql.UserInterface.Choices.Models;
 using SqlHelper.Helpers;
 using SqlHelper.Models;
 using SqlHelper.Test.UserInterface.Parameters.TestData;

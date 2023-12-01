@@ -1,12 +1,7 @@
-﻿using SqlHelper.Models;
+﻿using fql.UserInterface.Choices.Models;
 
 namespace fql.UserInterface.Choices.Formatters
 {
-    public class TableChoice
-    {
-        public Table Table { get; set; }
-    }
-
     public class TableChoiceFormatter : IChoiceFormatter<TableChoice>
     {
         private readonly int _padding;

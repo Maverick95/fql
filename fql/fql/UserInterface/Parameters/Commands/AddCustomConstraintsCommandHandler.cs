@@ -1,4 +1,5 @@
 ﻿using fql.UserInterface.Choices.Formatters;
+using fql.UserInterface.Choices.Models;
 using SqlHelper.Config;
 using SqlHelper.Extensions;
 using SqlHelper.Helpers;
