@@ -1,4 +1,5 @@
-﻿using SqlHelper.Config;
+﻿using fql.UserInterface.Choices.Formatters;
+using SqlHelper.Config;
 using SqlHelper.Extensions;
 using SqlHelper.Helpers;
 using SqlHelper.Models;
@@ -10,6 +11,7 @@ namespace SqlHelper.UserInterface.Parameters.Commands
         private readonly IUniqueIdProvider _uniqueIdProvider;
         private readonly IStream _stream;
         private readonly IConfigManager _config;
+        private readonly IChoiceFormatter<CustomConstraintChoice> _formatter;
         private readonly bool _saveConfig;
         private readonly string _alias;
 
@@ -17,12 +19,14 @@ namespace SqlHelper.UserInterface.Parameters.Commands
             IUniqueIdProvider uniqueIdProvider,
             IStream stream,
             IConfigManager config,
+            IChoiceFormatter<CustomConstraintChoice> formatter,
             bool saveConfig,
             string alias)
         {
             _uniqueIdProvider = uniqueIdProvider;
             _stream = stream;
             _config = config;
+            _formatter = formatter;
             _saveConfig = saveConfig;
             _alias = alias;
         }
@@ -34,7 +38,7 @@ namespace SqlHelper.UserInterface.Parameters.Commands
             var cleaned = input.Clean();
             var inputOptions = new[] { "c", "constraint" };
             
-            if (inputOptions.Contains(cleaned) == false)
+            if (!inputOptions.Contains(cleaned))
             {
                 return (HandlerResult.NEXT_HANDLER, data, parameters);
             }
@@ -88,18 +92,15 @@ namespace SqlHelper.UserInterface.Parameters.Commands
                     }).ToList(),
                 });
 
-            if (customConstraints.Any() == false)
+            if (!customConstraints.Any())
             {
                 _stream.WriteLine("constraint command contains no matches, please try again");
                 _stream.Padding();
                 return (HandlerResult.NEXT_COMMAND, data, parameters);
             }
 
-            var id_space = customConstraints.Count().ToString().Length + padding;
-            var ids = Enumerable.Range(1, customConstraints.Count());
-
-            var options_data = customConstraints
-                .Select(constraint => new
+            var choices = customConstraints
+                .Select(constraint => new CustomConstraintChoice
                 {
                     Constraint = constraint,
                     SourceTable = data.Tables[constraint.SourceTableId],
@@ -107,21 +108,16 @@ namespace SqlHelper.UserInterface.Parameters.Commands
                 })
                 .OrderBy(data => (data.SourceTable.Schema, data.SourceTable.Name, data.TargetTable.Schema, data.TargetTable.Name));
 
-            var source_table_max_length = options_data
-                .Select(data => $"{data.SourceTable.Schema}.{data.SourceTable.Name}")
-                .Max(name => name.Length);
+            var formats = _formatter.Format(choices);
 
-            var source_table_space = source_table_max_length + padding;
+            var id_space = formats.Count().ToString().Length + padding;
+            var ids = Enumerable.Range(1, customConstraints.Count());
 
-            var options = ids.Zip(options_data, (id, option) => new
+            var options = ids.Zip(choices, formats).Select(data => new
             {
-                Id = id,
-                Constraint = option.Constraint,
-                Text =
-                    $"{id}".PadRight(id_space) +
-                    $"{option.SourceTable.Schema}.{option.SourceTable.Name}".PadRight(source_table_space) +
-                    $"<----".PadRight(5 + padding) +
-                    $"{option.TargetTable.Schema}.{option.TargetTable.Name}",
+                Id = data.First,
+                Constraint = data.Second.Constraint,
+                Text = $"{data.First}".PadRight(id_space) + data.Third,
             });
 
             foreach (var option in options)

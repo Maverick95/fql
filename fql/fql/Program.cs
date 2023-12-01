@@ -142,6 +142,7 @@ namespace SqlHelper
                     Context.UniqueIdProvider,
                     Context.Stream,
                     Context.Config,
+                    new CustomConstraintChoiceFormatter(padding: 3),
                     !string.IsNullOrEmpty(options.Alias),
                     options.Alias),
                 finishCommandHandler = new FinishCommandHandler();
