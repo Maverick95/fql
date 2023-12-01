@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using fql.UserInterface.Choices.Formatters;
 using SqlHelper.Contexts;
 using SqlHelper.Factories.DbData;
 using SqlHelper.Factories.DefaultTypeValue;
@@ -135,7 +136,7 @@ namespace SqlHelper
                 padding: 5);
 
             ICommandHandler
-                addFiltersCommandHandler = new AddFiltersCommandHandler(Context.Stream),
+                addFiltersCommandHandler = new AddFiltersCommandHandler(Context.Stream, new FilterChoiceFormatter(padding: 3)),
                 addTablesCommandHandler = new AddTablesCommandHandler(Context.Stream),
                 addCustomConstraintsCommandHandler = new AddCustomConstraintsCommandHandler(
                     Context.UniqueIdProvider,

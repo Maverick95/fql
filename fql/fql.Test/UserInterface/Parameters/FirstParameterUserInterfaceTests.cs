@@ -1,5 +1,6 @@
 ﻿using FakeItEasy;
 using FluentAssertions;
+using fql.UserInterface.Choices.Formatters;
 using SqlHelper.Helpers;
 using SqlHelper.Models;
 using SqlHelper.Test.UserInterface.Parameters.TestData;
@@ -21,7 +22,7 @@ namespace SqlHelper.Test.UserInterface.Parameters
             _mockStream = A.Fake<IStream>();
             _loggerStream = new LoggerStream(_mockStream);
             _parameterUserInterface = new FirstParameterUserInterface(_loggerStream,
-                new AddFiltersCommandHandler(_loggerStream),
+                new AddFiltersCommandHandler(_loggerStream, A.Fake<IChoiceFormatter<FilterChoice>>()),
                 new AddTablesCommandHandler(_loggerStream),
                 new FinishCommandHandler());
         }

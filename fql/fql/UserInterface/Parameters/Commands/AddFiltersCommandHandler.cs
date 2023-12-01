@@ -1,4 +1,5 @@
-﻿using SqlHelper.Extensions;
+﻿using fql.UserInterface.Choices.Formatters;
+using SqlHelper.Extensions;
 using SqlHelper.Helpers;
 using SqlHelper.Models;
 using System.Text.RegularExpressions;
@@ -8,10 +9,12 @@ namespace SqlHelper.UserInterface.Parameters.Commands
     public class AddFiltersCommandHandler : ICommandHandler
     {
         private readonly IStream _stream;
+        private readonly IChoiceFormatter<FilterChoice> _formatter;
 
-        public AddFiltersCommandHandler(IStream stream)
+        public AddFiltersCommandHandler(IStream stream, IChoiceFormatter<FilterChoice> formatter)
         {
             _stream = stream;
+            _formatter = formatter;
         }
 
         public (HandlerResult result, DbData data, SqlQueryParameters parameters) TryCommandHandle(string input, DbData data, SqlQueryParameters parameters)
@@ -22,7 +25,7 @@ namespace SqlHelper.UserInterface.Parameters.Commands
             var rgx_filter = new Regex("^(f|filter) ");
             var match = rgx_filter.Match(cleaned);
 
-            if (match.Success == false)
+            if (!match.Success)
             {
                 return (HandlerResult.NEXT_HANDLER, data, parameters);
             }
@@ -36,42 +39,31 @@ namespace SqlHelper.UserInterface.Parameters.Commands
                 .Where(column => lookups.Any(
                     lookup => lookup.IsMatch(column.Value.Name)));
 
-            if (matches.Any() == false)
+            if (!matches.Any())
             {
                 _stream.WriteLine("filter command contains no matches, please try again");
                 _stream.Padding();
                 return (HandlerResult.NEXT_COMMAND, data, parameters);
             }
 
-            var options_data = matches
-                .Select(match => new
+            var choices = matches
+                .Select(match => new FilterChoice
                 {
                     Table = data.Tables[match.Key.TableId],
                     Column = match.Value,
                 })
                 .OrderBy(data => (data.Column.Name, data.Table.Schema, data.Table.Name));
 
-            var column_max_length =
-                options_data.Max(data => data.Column.Name.Length);
+            var formats = _formatter.Format(choices);
 
-            var schema_max_length =
-                options_data.Max(data => data.Table.Schema.Length);
+            var id_space = formats.Count().ToString().Length + padding;
+            var ids = Enumerable.Range(1, formats.Count());
 
-            var column_space = column_max_length + padding;
-            var schema_space = schema_max_length + padding + 1; // Extra space for the . separator
-
-            var id_space = matches.Count().ToString().Length + padding;
-            var ids = Enumerable.Range(1, matches.Count());
-
-            var options = ids.Zip(options_data, (id, option) => new
+            var options = ids.Zip(choices, formats).Select(data => new
             {
-                Id = id,
-                Column = option.Column,
-                Text =
-                    $"{id}".PadRight(id_space) +
-                    $"{option.Column.Name}".PadRight(column_space) +
-                    $"{option.Table.Schema}.".PadRight(schema_space) +
-                    $"{option.Table.Name}",
+                Id = data.First,
+                Column = data.Second.Column,
+                Text = $"{data.First}".PadRight(id_space) + data.Third,
             });
 
             foreach (var option in options)
