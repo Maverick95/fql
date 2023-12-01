@@ -23,7 +23,7 @@ namespace SqlHelper.Test.UserInterface.Parameters
             _loggerStream = new LoggerStream(_mockStream);
             _parameterUserInterface = new FirstParameterUserInterface(_loggerStream,
                 new AddFiltersCommandHandler(_loggerStream, A.Fake<IChoiceFormatter<FilterChoice>>()),
-                new AddTablesCommandHandler(_loggerStream),
+                new AddTablesCommandHandler(_loggerStream, A.Fake<IChoiceFormatter<TableChoice>>()),
                 new FinishCommandHandler());
         }
 

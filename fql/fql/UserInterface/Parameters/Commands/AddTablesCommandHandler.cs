@@ -1,4 +1,5 @@
-﻿using SqlHelper.Extensions;
+﻿using fql.UserInterface.Choices.Formatters;
+using SqlHelper.Extensions;
 using SqlHelper.Helpers;
 using SqlHelper.Models;
 using System.Text.RegularExpressions;
@@ -8,10 +9,12 @@ namespace SqlHelper.UserInterface.Parameters.Commands
     public class AddTablesCommandHandler : ICommandHandler
     {
         private readonly IStream _stream;
+        private readonly IChoiceFormatter<TableChoice> _formatter;
 
-        public AddTablesCommandHandler(IStream stream)
+        public AddTablesCommandHandler(IStream stream, IChoiceFormatter<TableChoice> formatter)
         {
             _stream = stream;
+            _formatter = formatter;
         }
 
         public (HandlerResult result, DbData data, SqlQueryParameters parameters) TryCommandHandle(string input, DbData data, SqlQueryParameters parameters)
@@ -22,7 +25,7 @@ namespace SqlHelper.UserInterface.Parameters.Commands
             var rgx_table = new Regex("^(t|table) ");
             var match = rgx_table.Match(cleaned);
 
-            if (match.Success == false)
+            if (!match.Success)
             {
                 return (HandlerResult.NEXT_HANDLER, data, parameters);
             }
@@ -36,33 +39,27 @@ namespace SqlHelper.UserInterface.Parameters.Commands
                 .Where(table => lookups.Any(
                     lookup => lookup.IsMatch(table.Value.Name)));
 
-            if (matches.Any() == false)
+            if (!matches.Any())
             {
                 _stream.WriteLine("table command contains no matches, please try again");
                 _stream.Padding();
                 return (HandlerResult.NEXT_COMMAND, data, parameters);
             }
 
+            var choices = matches
+                .Select(match => new TableChoice { Table = match.Value })
+                .OrderBy(table => (table.Table.Name, table.Table.Schema));
+
+            var formats = _formatter.Format(choices);
+
             var id_space = matches.Count().ToString().Length + padding;
             var ids = Enumerable.Range(1, matches.Count());
 
-            var options_data = matches
-                .Select(match => match.Value)
-                .OrderBy(table => (table.Name, table.Schema));
-
-            var table_max_length =
-                options_data.Max(data => data.Name.Length);
-
-            var table_space = table_max_length + padding;
-
-            var options = ids.Zip(options_data, (id, option) => new
+            var options = ids.Zip(choices, formats).Select(data => new
             {
-                Id = id,
-                Table = option,
-                Text =
-                    $"{id}".PadRight(id_space) +
-                    $"{option.Name}".PadRight(table_space) +
-                    $"{option.Schema}",
+                Id = data.First,
+                Table = data.Second.Table,
+                Text = $"{data.First}".PadRight(id_space) + data.Third,
             });
 
             foreach (var option in options)

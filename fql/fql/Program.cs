@@ -137,7 +137,7 @@ namespace SqlHelper
 
             ICommandHandler
                 addFiltersCommandHandler = new AddFiltersCommandHandler(Context.Stream, new FilterChoiceFormatter(padding: 3)),
-                addTablesCommandHandler = new AddTablesCommandHandler(Context.Stream),
+                addTablesCommandHandler = new AddTablesCommandHandler(Context.Stream, new TableChoiceFormatter(padding: 3)),
                 addCustomConstraintsCommandHandler = new AddCustomConstraintsCommandHandler(
                     Context.UniqueIdProvider,
                     Context.Stream,
