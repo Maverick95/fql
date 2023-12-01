@@ -1,5 +1,7 @@
 ﻿using CommandLine;
 using fql.UserInterface.Choices.Formatters;
+using fql.UserInterface.Choices.Models;
+using fql.UserInterface.Choices.Selectors;
 using SqlHelper.Contexts;
 using SqlHelper.Factories.DbData;
 using SqlHelper.Factories.DefaultTypeValue;
@@ -142,6 +144,7 @@ namespace SqlHelper
                     Context.UniqueIdProvider,
                     Context.Stream,
                     Context.Config,
+                    new NumberedListChoiceSelector<CustomConstraintChoice>(Context.Stream, padding: 3),
                     new CustomConstraintChoiceFormatter(padding: 3),
                     !string.IsNullOrEmpty(options.Alias),
                     options.Alias),

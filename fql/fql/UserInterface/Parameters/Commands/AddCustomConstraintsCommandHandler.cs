@@ -1,5 +1,6 @@
 ﻿using fql.UserInterface.Choices.Formatters;
 using fql.UserInterface.Choices.Models;
+using fql.UserInterface.Choices.Selectors;
 using SqlHelper.Config;
 using SqlHelper.Extensions;
 using SqlHelper.Helpers;
@@ -12,6 +13,7 @@ namespace SqlHelper.UserInterface.Parameters.Commands
         private readonly IUniqueIdProvider _uniqueIdProvider;
         private readonly IStream _stream;
         private readonly IConfigManager _config;
+        private readonly IChoiceSelector<CustomConstraintChoice> _selector;
         private readonly IChoiceFormatter<CustomConstraintChoice> _formatter;
         private readonly bool _saveConfig;
         private readonly string _alias;
@@ -20,6 +22,7 @@ namespace SqlHelper.UserInterface.Parameters.Commands
             IUniqueIdProvider uniqueIdProvider,
             IStream stream,
             IConfigManager config,
+            IChoiceSelector<CustomConstraintChoice> selector,
             IChoiceFormatter<CustomConstraintChoice> formatter,
             bool saveConfig,
             string alias)
@@ -27,6 +30,7 @@ namespace SqlHelper.UserInterface.Parameters.Commands
             _uniqueIdProvider = uniqueIdProvider;
             _stream = stream;
             _config = config;
+            _selector = selector;
             _formatter = formatter;
             _saveConfig = saveConfig;
             _alias = alias;
@@ -109,42 +113,21 @@ namespace SqlHelper.UserInterface.Parameters.Commands
                 })
                 .OrderBy(data => (data.SourceTable.Schema, data.SourceTable.Name, data.TargetTable.Schema, data.TargetTable.Name));
 
-            var formats = _formatter.Format(choices);
-
-            var id_space = formats.Count().ToString().Length + padding;
-            var ids = Enumerable.Range(1, customConstraints.Count());
-
-            var options = ids.Zip(choices, formats).Select(data => new
-            {
-                Id = data.First,
-                Constraint = data.Second.Constraint,
-                Text = $"{data.First}".PadRight(id_space) + data.Third,
-            });
-
-            foreach (var option in options)
-            {
-                _stream.WriteLine(option.Text);
-            }
-            _stream.Padding();
-            _stream.Write("> ");
-            cleaned = _stream.ReadLine().Clean();
-            _stream.Padding();
-
-            var selected = cleaned
-                .Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                .Join(
-                    options,
-                    input => input,
-                    option => option.Id.ToString(),
-                    (input, option) => option.Constraint);
+            var selected = _selector.Choose(choices, _formatter);
 
             _stream.WriteLine($"Adding {selected.Count()} constraints to the data-set");
             _stream.Padding();
 
             var new_constraints = new SortedDictionary<long, Constraint>(data.Constraints);
+            var seedId = new_constraints
+                .Where(kv => kv.Value.IsCustom)
+                .Select(kv => kv.Value.Id)
+                .DefaultIfEmpty()
+                .Max();
+
             foreach (var s in selected)
             {
-                new_constraints.Add(s.Id, s);
+                new_constraints.Add(++seedId, s.Constraint);
             }
 
             var new_data = new DbData
