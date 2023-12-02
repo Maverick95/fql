@@ -47,12 +47,12 @@ namespace SqlHelper
 
             DbData data;
 
-            if (string.IsNullOrEmpty(options.ConnectionString) == false)
+            if (!string.IsNullOrEmpty(options.ConnectionString))
             {
                 IDbDataFactory dbDataFactory = new ConnectionStringDbDataFactory(options.ConnectionString, Context.UniqueIdProvider);
                 var dataFromConnection = dbDataFactory.Create();
 
-                if (string.IsNullOrEmpty(options.Alias) == false)
+                if (!string.IsNullOrEmpty(options.Alias))
                 {
                     var optionsToActions = new List<(bool, SaveDbDataToAliasAction)>
                     {
@@ -121,7 +121,7 @@ namespace SqlHelper
             else
             {
                 (var exists, var dataFromAlias) = Context.Config.Read(options.Alias);
-                if (exists == false)
+                if (!exists)
                 {
                     Context.Stream.WriteLine("Failed to supply valid Alias. Exiting...");
                     return;
@@ -138,16 +138,26 @@ namespace SqlHelper
                 padding: 5);
 
             ICommandHandler
-                addFiltersCommandHandler = new AddFiltersCommandHandler(Context.Stream, new FilterChoiceFormatter(padding: 3)),
-                addTablesCommandHandler = new AddTablesCommandHandler(Context.Stream, new TableChoiceFormatter(padding: 3)),
+
+                addFiltersCommandHandler = new AddFiltersCommandHandler(
+                    Context.Stream,
+                    new FzfChoiceSelector<FilterChoice>(),
+                    new FilterChoiceFormatter(padding: 3)),
+
+                addTablesCommandHandler = new AddTablesCommandHandler(
+                    Context.Stream,
+                    new FzfChoiceSelector<TableChoice>(),
+                    new TableChoiceFormatter(padding: 3)),
+
                 addCustomConstraintsCommandHandler = new AddCustomConstraintsCommandHandler(
                     Context.UniqueIdProvider,
                     Context.Stream,
                     Context.Config,
-                    new NumberedListChoiceSelector<CustomConstraintChoice>(Context.Stream, padding: 3),
+                    new FzfChoiceSelector<CustomConstraintChoice>(),
                     new CustomConstraintChoiceFormatter(padding: 3),
                     !string.IsNullOrEmpty(options.Alias),
                     options.Alias),
+
                 finishCommandHandler = new FinishCommandHandler();
 
             IParameterUserInterface parameterUserInterface = new FirstParameterUserInterface(Context.Stream,
@@ -170,7 +180,7 @@ namespace SqlHelper
 
             var paths = pathFinder.Help(data, tables);
 
-            if (paths.Any() == false)
+            if (!paths.Any())
             {
                 Context.Stream.WriteLine("No output to generate! Your choices left no options to choose from.");
                 Context.Stream.WriteLine("There can only be one table that has no link on its primary field(s).");

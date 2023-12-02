@@ -38,8 +38,6 @@ namespace SqlHelper.UserInterface.Parameters.Commands
 
         public (HandlerResult result, DbData data, SqlQueryParameters parameters) TryCommandHandle(string input, DbData data, SqlQueryParameters parameters)
         {
-            const int padding = 3;
-
             var cleaned = input.Clean();
             var inputOptions = new[] { "c", "constraint" };
             

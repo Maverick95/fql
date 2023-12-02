@@ -1,5 +1,6 @@
 ﻿using fql.UserInterface.Choices.Formatters;
 using fql.UserInterface.Choices.Models;
+using fql.UserInterface.Choices.Selectors;
 using SqlHelper.Extensions;
 using SqlHelper.Helpers;
 using SqlHelper.Models;
@@ -10,28 +11,39 @@ namespace SqlHelper.UserInterface.Parameters.Commands
     public class AddTablesCommandHandler : ICommandHandler
     {
         private readonly IStream _stream;
+        private readonly IChoiceSelector<TableChoice> _selector;
         private readonly IChoiceFormatter<TableChoice> _formatter;
 
-        public AddTablesCommandHandler(IStream stream, IChoiceFormatter<TableChoice> formatter)
+        public AddTablesCommandHandler(IStream stream, IChoiceSelector<TableChoice> selector, IChoiceFormatter<TableChoice> formatter)
         {
             _stream = stream;
+            _selector = selector;
             _formatter = formatter;
         }
 
         public (HandlerResult result, DbData data, SqlQueryParameters parameters) TryCommandHandle(string input, DbData data, SqlQueryParameters parameters)
         {
-            const int padding = 3;
-
             var cleaned = input.Clean();
+
+            return _selector switch
+            {
+                var s when s is FzfChoiceSelector<TableChoice> => TryCommandHandleInternal_Fzf(cleaned, data, parameters),
+                var s when s is NumberedListChoiceSelector<TableChoice> => TryCommandHandleInternal_NumberedList(cleaned, data, parameters),
+                _ => throw new NotImplementedException("Selector not implemented")
+            };
+        }
+
+        private (HandlerResult result, DbData data, SqlQueryParameters parameters) TryCommandHandleInternal_NumberedList(string input, DbData data, SqlQueryParameters parameters)
+        {
             var rgx_table = new Regex("^(t|table) ");
-            var match = rgx_table.Match(cleaned);
+            var match = rgx_table.Match(input);
 
             if (!match.Success)
             {
                 return (HandlerResult.NEXT_HANDLER, data, parameters);
             }
 
-            var lookups = cleaned
+            var lookups = input
                 .Substring(match.Length)
                 .Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                 .Select(table => new Regex($"{table}", RegexOptions.IgnoreCase));
@@ -47,41 +59,14 @@ namespace SqlHelper.UserInterface.Parameters.Commands
                 return (HandlerResult.NEXT_COMMAND, data, parameters);
             }
 
-            var choices = matches
+            var choices = data.Tables
                 .Select(match => new TableChoice { Table = match.Value })
                 .OrderBy(table => (table.Table.Name, table.Table.Schema));
 
-            var formats = _formatter.Format(choices);
-
-            var id_space = matches.Count().ToString().Length + padding;
-            var ids = Enumerable.Range(1, matches.Count());
-
-            var options = ids.Zip(choices, formats).Select(data => new
-            {
-                Id = data.First,
-                Table = data.Second.Table,
-                Text = $"{data.First}".PadRight(id_space) + data.Third,
-            });
-
-            foreach (var option in options)
-            {
-                _stream.WriteLine(option.Text);
-            }
-            _stream.Padding();
-            _stream.Write("> ");
-            cleaned = _stream.ReadLine().Clean();
-            _stream.Padding();
-
-            var selected = cleaned
-                .Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                .Join(
-                    options,
-                    input => input,
-                    option => option.Id.ToString(),
-                    (input, option) => option.Table);
+            var selected = _selector.Choose(choices, _formatter);
 
             var selected_output = selected
-                .Select(table => $"[{table.Schema}].[{table.Name}]")
+                .Select(table => $"[{table.Table.Schema}].[{table.Table.Name}]")
                 .Sentence(", ", "none found");
 
             _stream.WriteLine($"Adding {selected.Count()} tables to the selection ({selected_output})");
@@ -91,7 +76,40 @@ namespace SqlHelper.UserInterface.Parameters.Commands
             {
                 Filters = parameters.Filters,
                 Tables = parameters.Tables
-                    .UnionBy(selected, (table) => table.Id)
+                    .UnionBy(selected.Select(s => s.Table), (table) => table.Id)
+                    .ToList(),
+            };
+
+            return (HandlerResult.NEXT_COMMAND, data, new_parameters);
+        }
+
+        private (HandlerResult result, DbData data, SqlQueryParameters parameters) TryCommandHandleInternal_Fzf(string input, DbData data, SqlQueryParameters parameters)
+        {
+            var inputOptions = new[] { "t", "table" };
+
+            if (!inputOptions.Contains(input))
+            {
+                return (HandlerResult.NEXT_HANDLER, data, parameters);
+            }
+
+            var choices = data.Tables
+                .Select(match => new TableChoice { Table = match.Value })
+                .OrderBy(table => (table.Table.Name, table.Table.Schema));
+
+            var selected = _selector.Choose(choices, _formatter);
+
+            var selected_output = selected
+                .Select(table => $"[{table.Table.Schema}].[{table.Table.Name}]")
+                .Sentence(", ", "none found");
+
+            _stream.WriteLine($"Adding {selected.Count()} tables to the selection ({selected_output})");
+            _stream.Padding();
+
+            var new_parameters = new SqlQueryParameters
+            {
+                Filters = parameters.Filters,
+                Tables = parameters.Tables
+                    .UnionBy(selected.Select(s => s.Table), (table) => table.Id)
                     .ToList(),
             };
 
