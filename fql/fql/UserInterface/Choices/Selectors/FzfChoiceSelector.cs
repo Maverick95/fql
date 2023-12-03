@@ -23,7 +23,14 @@ namespace fql.UserInterface.Choices.Selectors
             using (Process fzf = new Process())
             {
                 fzf.StartInfo.FileName = "C:\\DEV\\fzf\\fzf-0.44.1-windows_amd64\\fzf.exe";
-                fzf.StartInfo.Arguments = "--height=10% --border=sharp";
+                fzf.StartInfo.Arguments = string.Join(' ',
+                    "-i",
+                    "--no-sort",
+                    "--multi",
+                    "--reverse",
+                    "--height=10%",
+                    "--border=sharp"
+                );
                 fzf.StartInfo.UseShellExecute = false;
                 fzf.StartInfo.RedirectStandardInput = true;
                 fzf.StartInfo.RedirectStandardOutput = true;
