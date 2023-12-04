@@ -108,8 +108,7 @@ namespace SqlHelper.UserInterface.Parameters.Commands
                     Constraint = constraint,
                     SourceTable = data.Tables[constraint.SourceTableId],
                     TargetTable = data.Tables[constraint.TargetTableId],
-                })
-                .OrderBy(data => (data.SourceTable.Schema, data.SourceTable.Name, data.TargetTable.Schema, data.TargetTable.Name));
+                });
 
             var selected = _selector.Choose(choices, _formatter);
 

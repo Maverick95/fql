@@ -66,8 +66,7 @@ namespace SqlHelper.UserInterface.Parameters.Commands
                 {
                     Table = data.Tables[match.Key.TableId],
                     Column = match.Value,
-                })
-                .OrderBy(data => (data.Column.Name, data.Table.Schema, data.Table.Name));
+                });
 
             var selected = _selector.Choose(choices, _formatter);
 

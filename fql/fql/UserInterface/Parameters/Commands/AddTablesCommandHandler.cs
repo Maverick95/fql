@@ -60,9 +60,7 @@ namespace SqlHelper.UserInterface.Parameters.Commands
             }
 
             var choices = data.Tables
-                .Select(match => new TableChoice { Table = match.Value })
-                .OrderBy(table => (table.Table.Name, table.Table.Schema));
-
+                .Select(match => new TableChoice { Table = match.Value });
             var selected = _selector.Choose(choices, _formatter);
 
             var selected_output = selected

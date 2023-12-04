@@ -2,9 +2,11 @@
 {
     public class StringFormatter : IChoiceFormatter<string>
     {
-        public IEnumerable<string> Format(IEnumerable<string> choices)
+        public IEnumerable<(string choice, string format)> Format(IEnumerable<string> choices)
         {
-            return choices.Select(choice => choice);
+            return choices
+                .OrderBy(choice => choice, StringComparer.InvariantCultureIgnoreCase)
+                .Select(choice => (choice, choice));
         }
     }
 }

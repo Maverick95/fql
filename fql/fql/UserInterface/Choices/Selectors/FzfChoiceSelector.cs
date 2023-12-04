@@ -13,11 +13,8 @@ namespace fql.UserInterface.Choices.Selectors
             }
 
             var formats = formatter.Format(choices);
-            var data = formats
-                .Zip(choices, (format, choice) => new { Format = format, Choice = choice })
-                // This should fail (as rightly so)
-                .ToDictionary(d => d.Format, d => d.Choice);
-
+            // If duplicates exist this should fail
+            var data = formats.ToDictionary(d => d.format, d => d.choice);
             string key = null;
 
             using (Process fzf = new Process())

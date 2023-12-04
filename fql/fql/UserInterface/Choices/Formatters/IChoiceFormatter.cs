@@ -2,6 +2,6 @@
 {
     public interface IChoiceFormatter<T>
     {
-        public IEnumerable<string> Format(IEnumerable<T> choices);
+        public IEnumerable<(T choice, string format)> Format(IEnumerable<T> choices);
     }
 }

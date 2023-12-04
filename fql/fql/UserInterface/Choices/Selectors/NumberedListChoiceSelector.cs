@@ -31,11 +31,11 @@ namespace fql.UserInterface.Choices.Selectors
 
             var formats = formatter.Format(choices);
 
-            var options = ids.Zip(choices, formats).Select(data => new
+            var options = ids.Zip(formats, (id, format) => new
             {
-                Id = data.First,
-                Choice = data.Second,
-                Text = $"{data.First}".PadRight(id_space) + data.Third,
+                Id = id,
+                Choice = format.choice,
+                Text = $"{id}".PadRight(id_space) + format.format,
             });
 
             foreach (var option in options)
