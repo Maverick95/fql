@@ -15,7 +15,7 @@ namespace fql.UserInterface.Choices.Selectors
             var formats = formatter.Format(choices);
             // If duplicates exist this should fail
             var data = formats.ToDictionary(d => d.format, d => d.choice);
-            string key = null;
+            string input = null;
 
             using (Process fzf = new Process())
             {
@@ -44,16 +44,14 @@ namespace fql.UserInterface.Choices.Selectors
                 fzf_input.Close();
                 fzf.WaitForExit();
 
-                key = fzf_output.ReadToEnd();
+                input = fzf_output.ReadToEnd();
             }
 
-            if (key.Last() is '\n')
-            {
-                key = key.Remove(key.Length - 1);
-            }
+            var results = input
+                .Split('\n', StringSplitOptions.RemoveEmptyEntries)
+                .Select(key => data[key]);
 
-            var output = data[key];
-            return new List<T> { output };
+            return results;
         }
     }
 }
