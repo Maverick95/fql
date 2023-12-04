@@ -59,7 +59,7 @@ namespace SqlHelper.UserInterface.Parameters.Commands
                 return (HandlerResult.NEXT_COMMAND, data, parameters);
             }
 
-            var choices = data.Tables
+            var choices = matches
                 .Select(match => new TableChoice { Table = match.Value });
             var selected = _selector.Choose(choices, _formatter);
 
