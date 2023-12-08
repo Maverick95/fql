@@ -1,4 +1,5 @@
-﻿using SqlHelper.Config;
+﻿using fql.UserInterface.Choices.Selectors;
+using SqlHelper.Config;
 using SqlHelper.Helpers;
 
 namespace SqlHelper.Contexts
@@ -10,14 +11,7 @@ namespace SqlHelper.Contexts
         public IConfigManager CreateConfigManager();
 
         public IStream CreateStream();
-    }
 
-    public class StandardContextFactory: IContextFactory
-    {
-        public IUniqueIdProvider CreateUniqueIdProvider() => new SequentialUniqueIdProvider();
-
-        public IConfigManager CreateConfigManager() => new AppResourceConfigManager(new FileManager(), new AppResourceConfigLocation());
-
-        public IStream CreateStream() => new ConsoleStream();
+        public IChoiceSelector<T> CreateChoiceSelector<T>();
     }
 }

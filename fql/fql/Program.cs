@@ -1,7 +1,5 @@
 ﻿using CommandLine;
 using fql.UserInterface.Choices.Formatters;
-using fql.UserInterface.Choices.Models;
-using fql.UserInterface.Choices.Selectors;
 using SqlHelper.Contexts;
 using SqlHelper.Factories.DbData;
 using SqlHelper.Factories.DefaultTypeValue;
@@ -141,19 +139,19 @@ namespace SqlHelper
 
                 addFiltersCommandHandler = new AddFiltersCommandHandler(
                     Context.Stream,
-                    new FzfChoiceSelector<FilterChoice>(),
+                    Context.FilterChoiceSelector,
                     new FilterChoiceFormatter(padding: 3)),
 
                 addTablesCommandHandler = new AddTablesCommandHandler(
                     Context.Stream,
-                    new FzfChoiceSelector<TableChoice>(),
+                    Context.TableChoiceSelector,
                     new TableChoiceFormatter(padding: 3)),
 
                 addCustomConstraintsCommandHandler = new AddCustomConstraintsCommandHandler(
                     Context.UniqueIdProvider,
                     Context.Stream,
                     Context.Config,
-                    new FzfChoiceSelector<CustomConstraintChoice>(),
+                    Context.CustomConstraintChoiceSelector,
                     new CustomConstraintChoiceFormatter(padding: 3),
                     !string.IsNullOrEmpty(options.Alias),
                     options.Alias),

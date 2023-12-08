@@ -1,6 +1,19 @@
 # F         Q           L
 # Fast      Query       Language
 
+# Shout-outs and acknowledgements
+
+fql was either made possible or vastly improved by these distributions. Check them out, they're all incredibly useful.
+
+| Name              | Source                                           |
+| ----------------- | ------------------------------------------------ |
+| CommandLineParser | https://github.com/commandlineparser/commandline |
+| FakeItEasy        | https://fakeiteasy.github.io/                    |
+| FluentAssertions  | https://fluentassertions.com/                    |
+| fzf               | https://github.com/junegunn/fzf                  |
+| TextCopy          | https://github.com/CopyText/TextCopy             |
+| xunit             | https://xunit.net/                               |
+
 # Motivation
 
 My motivation is that SQL is great, but writing SQL is a pain. Why?
@@ -213,3 +226,24 @@ In the simple world of fql, this would produce duplicated data, since you would 
 This is the reason for the "No output to generate!" message. Only **one** table is allowed to **not** be the Source table in a constraint used to build your query. In the above example, **website.ORDER** and **website.CUSTOMER_ADDRESS** satisfy this. Requiring both tables to build your query is therefore invalid.
 
 One way to fix this is to add the field ***CustomerAddressId*** to **website.ORDER**, and a constraint linking **website.ORDER** to **website.CUSTOMER_ADDRESS**. You have probably done this already. I'm just assuming your database sucks for the purposes of this example.
+
+# Updated 2023-12-08 : fzf integration
+
+fql now supports fzf as an interface for selecting filters, tables and constraints. I think it's a vast improvement. Here's how to enable fzf.
+
+1. Get the application fzf.exe successfully running on your machine, https://github.com/junegunn/fzf.
+The application should successfully run in the same shell that you intend to run fql.
+
+2. Add an appsettings.json file to the fql root project folder
+
+```
+{
+  "choice-selector": {
+    "interface": "fzf",
+    "fzfPath": [folder containing fzf.exe]
+  }
+}
+```
+
+If fzf.exe cannot be found in this location, fql will default to using the standard, terrible numbered-list choice selector.
+I would seriously recommend checking out this option.

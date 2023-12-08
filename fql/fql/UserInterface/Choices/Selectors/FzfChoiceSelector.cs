@@ -5,6 +5,13 @@ namespace fql.UserInterface.Choices.Selectors
 {
     public class FzfChoiceSelector<T> : IChoiceSelector<T>
     {
+        private readonly string _fzfPath;
+
+        public FzfChoiceSelector(string fzfPath)
+        {
+            _fzfPath = fzfPath;
+        }
+
         public IEnumerable<T> Choose(IEnumerable<T> choices, IChoiceFormatter<T> formatter)
         {
             if (!choices.Any())
@@ -19,7 +26,7 @@ namespace fql.UserInterface.Choices.Selectors
 
             using (Process fzf = new Process())
             {
-                fzf.StartInfo.FileName = "C:\\DEV\\fzf\\fzf-0.44.1-windows_amd64\\fzf.exe";
+                fzf.StartInfo.FileName = Path.Combine(_fzfPath, "fzf.exe");
                 fzf.StartInfo.Arguments = string.Join(' ',
                     "-i",
                     "--no-sort",
