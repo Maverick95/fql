@@ -8,13 +8,16 @@
 				                [Schema] = SCH.[name],
 				                [Name] = TAB.[name]
                 FROM			[sys].[schemas] SCH
-                INNER JOIN		[sys].[database_principals] DPR
-	                ON			DPR.[principal_id] = SCH.[principal_id]
+                --INNER JOIN		[sys].[database_principals] DPR
+	            --    ON			DPR.[principal_id] = SCH.[principal_id]
                 INNER JOIN		[sys].[tables] TAB
 	                ON			TAB.[schema_id] = SCH.[schema_id]
-                WHERE			DPR.[name] IN ('dbo')
-                AND				SCH.[name] NOT IN ('dbo','tSQLt')
-                AND				TAB.[temporal_type_desc] NOT IN ('HISTORY_TABLE');
+                --WHERE			
+                --                DPR.[name] IN ('dbo')
+                --AND				
+                --                SCH.[name] NOT IN ('dbo','tSQLt')
+                --AND				
+                --                TAB.[temporal_type_desc] NOT IN ('HISTORY_TABLE');
             ";
 
         public string GetQueryColumns() =>
@@ -40,8 +43,8 @@
                                     ELSE 0
                                 END
                 FROM			[sys].[schemas] SCH
-                INNER JOIN		[sys].[database_principals] DPR
-	                ON			DPR.[principal_id] = SCH.[principal_id]
+                --INNER JOIN		[sys].[database_principals] DPR
+	            --    ON			DPR.[principal_id] = SCH.[principal_id]
                 INNER JOIN		[sys].[tables] TAB
 	                ON			TAB.[schema_id] = SCH.[schema_id]
                 INNER JOIN		[sys].[all_columns] ACO
@@ -49,9 +52,12 @@
                 INNER JOIN		[sys].[types] TYP
 	                ON			TYP.system_type_id = ACO.system_type_id
                 AND				TYP.user_type_id = ACO.user_type_id
-                WHERE			DPR.[name] IN ('dbo')
-                AND				SCH.[name] NOT IN ('dbo','tSQLt')
-                AND				TAB.[temporal_type_desc] NOT IN ('HISTORY_TABLE');
+                --WHERE			
+                --                DPR.[name] IN ('dbo')
+                --AND				
+                --                SCH.[name] NOT IN ('dbo','tSQLt')
+                --AND				
+                --                TAB.[temporal_type_desc] NOT IN ('HISTORY_TABLE');
             ";
 
         public string GetQueryConstraints() =>
@@ -62,17 +68,20 @@
 				                TargetColumn = FKC.parent_column_id,
 				                SourceColumn = FKC.referenced_column_id
                 FROM			[sys].[schemas] SCH
-                INNER JOIN		[sys].[database_principals] DPR
-	                ON			DPR.[principal_id] = SCH.[principal_id]
+                --INNER JOIN		[sys].[database_principals] DPR
+	            --    ON			DPR.[principal_id] = SCH.[principal_id]
                 INNER JOIN		[sys].[tables] TAB
 	                ON			TAB.[schema_id] = SCH.[schema_id]
                 INNER JOIN		[sys].[foreign_keys] FKS
 	                ON			FKS.[parent_object_id] = TAB.[object_id]
                 INNER JOIN		[sys].[foreign_key_columns] FKC
 	                ON			FKC.constraint_object_id = FKS.[object_id]
-                WHERE			DPR.[name] IN ('dbo')
-                AND				SCH.[name] NOT IN ('dbo','tSQLt')
-                AND				TAB.[temporal_type_desc] NOT IN ('HISTORY_TABLE');
+                --WHERE			
+                --                DPR.[name] IN ('dbo')
+                --AND				
+                --                SCH.[name] NOT IN ('dbo','tSQLt')
+                --AND				
+                --                TAB.[temporal_type_desc] NOT IN ('HISTORY_TABLE');
             ";
     }
 }
