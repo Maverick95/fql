@@ -13,5 +13,9 @@ namespace SqlHelper.Contexts
         public IStream CreateStream();
 
         public IChoiceSelector<T> CreateChoiceSelector<T>();
+
+        public IChoiceSelector<string> CreateCommandSelector();
+
+        public IChoiceSelector<string> CreatePathSelector();
     }
 }

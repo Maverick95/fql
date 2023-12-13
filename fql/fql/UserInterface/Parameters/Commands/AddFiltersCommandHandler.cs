@@ -35,8 +35,6 @@ namespace SqlHelper.UserInterface.Parameters.Commands
 
         private (HandlerResult result, DbData data, SqlQueryParameters parameters) TryCommandHandleInternal_NumberedList(string input, DbData data, SqlQueryParameters parameters)
         {
-            const int padding = 3;
-
             var rgx_filter = new Regex("^(f|filter) ");
             var match = rgx_filter.Match(input);
 

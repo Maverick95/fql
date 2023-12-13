@@ -1,4 +1,5 @@
-﻿using SqlHelper.Extensions;
+﻿using fql.UserInterface.Choices.Formatters;
+using fql.UserInterface.Choices.Selectors;
 using SqlHelper.Helpers;
 using SqlHelper.Models;
 
@@ -20,30 +21,12 @@ namespace SqlHelper.UserInterface.Path
         }
 
         private readonly IStream _stream;
+        private readonly IChoiceSelector<string> _selector;
 
-        public MoveToBetterPathUserInterface(IStream stream)
+        public MoveToBetterPathUserInterface(IStream stream, IChoiceSelector<string> selector)
         {
             _stream = stream;
-        }
-
-        private UserChoice? Handler_UserChoice(string input)
-        {
-            var cleaned = input.Clean();
-            var inputsMatchingChoices = new Dictionary<string, UserChoice>
-            {
-                {   "p",                UserChoice.MOVE_BACKWARDS       },
-                {   "previous",         UserChoice.MOVE_BACKWARDS       },
-                {   "n",                UserChoice.MOVE_FORWARDS        },
-                {   "next",             UserChoice.MOVE_FORWARDS        },
-                {   "c",                UserChoice.CHOOSE_CURRENT       },
-                {   "current",          UserChoice.CHOOSE_CURRENT       },
-            };
-
-            if (inputsMatchingChoices.TryGetValue(cleaned, out var choice))
-                return choice;
-
-            _stream.Write("Wrong choice, try again : ");
-            return null;
+            _selector = selector;
         }
 
         private void Write_Path(ResultRouteTree path)
@@ -63,11 +46,11 @@ namespace SqlHelper.UserInterface.Path
 
                 var childDepth = parentDepth + childRoute.Route.Count;
 
-                var tablesDepths = Enumerable.Range(parentDepth + 1, tables.Count());
+                var tablesDepths = Enumerable.Range(parentDepth + 1, tables.Count);
                 var newWritePathData = tablesDepths.Zip(tables, (depth, table) => (depth, offset, table));
                 writePathData.AddRange(newWritePathData);
 
-                if (childTree.Children.Any() == false)
+                if (!childTree.Children.Any())
                 {
                     offset += 1;
                 }
@@ -126,6 +109,8 @@ namespace SqlHelper.UserInterface.Path
                 var outputNames = string.Join("", outputData.Select(output => output.Name));
                 _stream.WriteLine(outputNames);
             }
+
+            _stream.Padding();
         }
 
         public ResultRouteTree Choose(IEnumerable<ResultRouteTree> paths)
@@ -148,33 +133,67 @@ namespace SqlHelper.UserInterface.Path
                     NextPathDirection.BACKWARDS when pathsBackwards.Any() => pathsBackwards.Pop(),
                     NextPathDirection.BACKWARDS when pathsForwards.Any() => pathsForwards.Pop(),
                     NextPathDirection.BACKWARDS when enumerator.MoveNext() => enumerator.Current,
+
+                    _ => enumerator.Current,
                 };
 
                 Write_Path(current_path);
-                _stream.Padding();
-                _stream.Write("> ");
-
-                UserChoice? choice = null;
-                while (choice is null)
+                
+                var optionsToChoices = _selector switch
                 {
-                    var input = _stream.ReadLine();
-                    _stream.Padding();
-                    choice = Handler_UserChoice(input);
+                    var s when s is PathUserInterfaceOptionChoiceSelector =>
+                        new Dictionary<string, UserChoice>
+                        {
+                            {   "p",                UserChoice.MOVE_BACKWARDS       },
+                            {   "previous",         UserChoice.MOVE_BACKWARDS       },
+                            {   "n",                UserChoice.MOVE_FORWARDS        },
+                            {   "next",             UserChoice.MOVE_FORWARDS        },
+                            {   "c",                UserChoice.CHOOSE_CURRENT       },
+                            {   "current",          UserChoice.CHOOSE_CURRENT       },
+                        },
+
+                    var s when s is FzfChoiceSelector<string> =>
+                        new Dictionary<string, UserChoice>
+                        {
+                            {   "previous",         UserChoice.MOVE_BACKWARDS       },
+                            {   "next",             UserChoice.MOVE_FORWARDS        },
+                            {   "current",          UserChoice.CHOOSE_CURRENT       },
+                        },
+
+                    _ => throw new NotImplementedException("Selector not implemented"),
+                };
+
+                var options = optionsToChoices.Keys;
+                var selected = _selector.Choose(options, new StringFormatter());
+
+                if (selected.Count() == 1)
+                {
+                    var choice = optionsToChoices[selected.First()];
+                    switch (choice)
+                    {
+                        case UserChoice.CHOOSE_CURRENT:
+                            chosen_path = current_path;
+                            _stream.WriteLine("Path selected!");
+                            _stream.Padding();
+                            break;
+                        case UserChoice.MOVE_FORWARDS:
+                            direction = NextPathDirection.FORWARDS;
+                            pathsBackwards.Push(current_path);
+                            _stream.WriteLine("Printing next path...");
+                            _stream.Padding();
+                            break;
+                        case UserChoice.MOVE_BACKWARDS:
+                            direction = NextPathDirection.BACKWARDS;
+                            pathsForwards.Push(current_path);
+                            _stream.WriteLine("Printing previous path...");
+                            _stream.Padding();
+                            break;
+                    }
                 }
-
-                switch (choice.Value)
+                else
                 {
-                    case UserChoice.CHOOSE_CURRENT:
-                        chosen_path = current_path;
-                        break;
-                    case UserChoice.MOVE_FORWARDS:
-                        direction = NextPathDirection.FORWARDS;
-                        pathsBackwards.Push(current_path);
-                        break;
-                    case UserChoice.MOVE_BACKWARDS:
-                        direction = NextPathDirection.BACKWARDS;
-                        pathsForwards.Push(current_path);
-                        break;
+                    _stream.WriteLine("Invalid command, please try again");
+                    _stream.Padding();
                 }
             }
 

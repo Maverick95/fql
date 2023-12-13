@@ -17,6 +17,8 @@ namespace SqlHelper.Contexts
         private static IChoiceSelector<TableChoice> _tableChoiceSelector;
         private static IChoiceSelector<FilterChoice> _filterChoiceSelector;
         private static IChoiceSelector<CustomConstraintChoice> _customConstraintChoiceSelector;
+        private static IChoiceSelector<string> _commandChoiceSelector;
+        private static IChoiceSelector<string> _pathChoiceSelector;
 
         public static void Use(IContextFactory contextFactory)
         {
@@ -27,6 +29,8 @@ namespace SqlHelper.Contexts
             _tableChoiceSelector = null;
             _filterChoiceSelector = null;
             _customConstraintChoiceSelector = null;
+            _commandChoiceSelector = null;
+            _pathChoiceSelector = null;
         }
 
         public static IUniqueIdProvider UniqueIdProvider
@@ -86,6 +90,26 @@ namespace SqlHelper.Contexts
                 if (_customConstraintChoiceSelector is null)
                     _customConstraintChoiceSelector = _contextFactory.CreateChoiceSelector<CustomConstraintChoice>();
                 return _customConstraintChoiceSelector;
+            }
+        }
+
+        public static IChoiceSelector<string> CommandChoiceSelector
+        {
+            get
+            {
+                if (_commandChoiceSelector is null)
+                    _commandChoiceSelector = _contextFactory.CreateCommandSelector();
+                return _commandChoiceSelector;
+            }
+        }
+
+        public static IChoiceSelector<string> PathChoiceSelector
+        {
+            get
+            {
+                if (_pathChoiceSelector is null)
+                    _pathChoiceSelector = _contextFactory.CreatePathSelector();
+                return _pathChoiceSelector;
             }
         }
     }

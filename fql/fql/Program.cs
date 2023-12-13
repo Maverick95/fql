@@ -159,12 +159,17 @@ namespace SqlHelper
                 finishCommandHandler = new FinishCommandHandler();
 
             IParameterUserInterface parameterUserInterface = new FirstParameterUserInterface(Context.Stream,
+                Context.CommandChoiceSelector,
+                new StringFormatter(),
                 addFiltersCommandHandler,
                 addTablesCommandHandler,
                 addCustomConstraintsCommandHandler,
                 finishCommandHandler);
 
-            IPathUserInterface pathUserInterface = new MoveToBetterPathUserInterface(Context.Stream);
+            IPathUserInterface pathUserInterface = new MoveToBetterPathUserInterface(
+                Context.Stream,
+                Context.PathChoiceSelector);
+
             IOutputHandler outputHandler = options.IsPrintQueryOptionSupplied ?
                 new PrintToConsoleOutputHandler(Context.Stream) :
                 new SendToClipboardOutputHandler();

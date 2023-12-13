@@ -35,30 +35,42 @@ namespace fql.Contexts
 
         public IUniqueIdProvider CreateUniqueIdProvider() => new SequentialUniqueIdProvider();
 
+        private IChoiceSelector<T>? CheckForFzfChoiceSelectorInterface<T>()
+        {
+            var choiceSelectorSettings = _configuration.GetSection(SECTION_CHOICE_SELECTOR).Get<ChoiceSelectorSettings>();
+            
+            var isFzfValid =
+                choiceSelectorSettings is not null &&
+                choiceSelectorSettings.Interface is "fzf" &&
+                choiceSelectorSettings.FzfPath is not null &&
+                File.Exists(Path.Combine(choiceSelectorSettings.FzfPath, "fzf.exe"));
+
+            return isFzfValid ?
+                new FzfChoiceSelector<T>(choiceSelectorSettings.FzfPath) :
+                null;
+        }
+
         public IChoiceSelector<T> CreateChoiceSelector<T>()
         {
-            IChoiceSelector<T> selector = null;
-            var choiceSelectorSettings = _configuration.GetSection(SECTION_CHOICE_SELECTOR).Get<ChoiceSelectorSettings>();
-
-            if (choiceSelectorSettings is not null)
-            {
-                switch (choiceSelectorSettings.Interface)
-                {
-                    case "fzf":
-                        {
-                            if (choiceSelectorSettings.FzfPath is not null &&
-                                File.Exists(Path.Combine(choiceSelectorSettings.FzfPath, "fzf.exe")))
-                            {
-                                selector = new FzfChoiceSelector<T>(choiceSelectorSettings.FzfPath);
-                            }
-                        }
-                        break;
-                }
-            }
-
+            IChoiceSelector<T> selector = CheckForFzfChoiceSelectorInterface<T>();
             // Default option (same as StandardContextFactory)
             selector ??= new NumberedListChoiceSelector<T>(new ConsoleStream(), padding: 3);
+            return selector;
+        }
 
+        public IChoiceSelector<string> CreateCommandSelector()
+        {
+            IChoiceSelector<string> selector = CheckForFzfChoiceSelectorInterface<string>();
+            // Default option (same as StandardContextFactory)
+            selector ??= new UserInputChoiceSelector(new ConsoleStream());
+            return selector;
+        }
+
+        public IChoiceSelector<string> CreatePathSelector()
+        {
+            IChoiceSelector<string> selector = CheckForFzfChoiceSelectorInterface<string>();
+            // Default option (same as StandardContextFactory)
+            selector ??= new PathUserInterfaceOptionChoiceSelector(new ConsoleStream());
             return selector;
         }
     }

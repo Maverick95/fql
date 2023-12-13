@@ -14,5 +14,9 @@ namespace fql.Contexts
         public IStream CreateStream() => new ConsoleStream();
 
         public IChoiceSelector<T> CreateChoiceSelector<T>() => new NumberedListChoiceSelector<T>(new ConsoleStream(), padding: 3);
+
+        public IChoiceSelector<string> CreateCommandSelector() => new UserInputChoiceSelector(new ConsoleStream());
+
+        public IChoiceSelector<string> CreatePathSelector() => new PathUserInterfaceOptionChoiceSelector(new ConsoleStream());
     }
 }
