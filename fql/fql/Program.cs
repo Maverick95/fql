@@ -162,7 +162,7 @@ namespace SqlHelper
                     !string.IsNullOrEmpty(options.Alias),
                     options.Alias),
 
-                finishCommandHandler = new FinishCommandHandler();
+                finishCommandHandler = new FinishCommandHandler(Context.Stream);
 
             IParameterUserInterface parameterUserInterface = new FirstParameterUserInterface(Context.Stream,
                 Context.CommandChoiceSelector,

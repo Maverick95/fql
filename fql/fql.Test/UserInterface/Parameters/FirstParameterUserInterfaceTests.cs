@@ -28,7 +28,7 @@ namespace SqlHelper.Test.UserInterface.Parameters
                 A.Fake<IChoiceFormatter<string>>(),
                 new AddFiltersCommandHandler(_loggerStream, A.Fake<IChoiceSelector<FilterChoice>>(), A.Fake<IChoiceFormatter<FilterChoice>>()),
                 new AddTablesCommandHandler(_loggerStream, A.Fake<IChoiceSelector<TableChoice>>(), A.Fake<IChoiceFormatter<TableChoice>>()),
-                new FinishCommandHandler());
+                new FinishCommandHandler(_loggerStream));
         }
 
         [Theory]
