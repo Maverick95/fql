@@ -49,6 +49,8 @@ namespace SqlHelper
             {
                 IDbDataFactory dbDataFactory = new ConnectionStringDbDataFactory(options.ConnectionString, Context.UniqueIdProvider);
                 var dataFromConnection = dbDataFactory.Create();
+                // Not strictly necessary, but a good idea to standardize reseeding constraints on creation
+                dataFromConnection = DbDataHelpers.ReseedConstraints(dataFromConnection, Context.UniqueIdProvider);
 
                 if (!string.IsNullOrEmpty(options.Alias))
                 {
@@ -85,6 +87,8 @@ namespace SqlHelper
                         case SaveDbDataToAliasAction.MERGE_ALIAS:
                             {
                                 (var exists, var dataFromAlias) = Context.Config.Read(options.Alias);
+                                // Required to standardize reseeding constraints on creation
+                                dataFromAlias = DbDataHelpers.ReseedConstraints(dataFromAlias, Context.UniqueIdProvider);
                                 if (exists)
                                 {
                                     dataFromConnection = DbDataHelpers.TryMergeDbDataCustomConstraints(
@@ -119,6 +123,8 @@ namespace SqlHelper
             else
             {
                 (var exists, var dataFromAlias) = Context.Config.Read(options.Alias);
+                // Required to standardize reseeding constraints on creation
+                dataFromAlias = DbDataHelpers.ReseedConstraints(dataFromAlias, Context.UniqueIdProvider);
                 if (!exists)
                 {
                     Context.Stream.WriteLine("Failed to supply valid Alias. Exiting...");

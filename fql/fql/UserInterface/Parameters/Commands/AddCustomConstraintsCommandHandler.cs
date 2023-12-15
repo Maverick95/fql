@@ -84,6 +84,7 @@ namespace SqlHelper.UserInterface.Parameters.Commands
                 .Where(pk => pk.PrimaryKeyColumns.Count() == pk.PrimaryKeyMatchingColumns.Count())
                 .Select(pk => new Constraint
                 {
+                    // This line is very important, maintains uniqueness of all constraint ids.
                     Id = _uniqueIdProvider.Next(),
                     IsCustom = true,
                     TargetTableId = pk.PrimaryKeyMatchingColumns.Key.TargetTableId,
@@ -116,15 +117,9 @@ namespace SqlHelper.UserInterface.Parameters.Commands
             _stream.Padding();
 
             var new_constraints = new SortedDictionary<long, Constraint>(data.Constraints);
-            var seedId = new_constraints
-                .Where(kv => kv.Value.IsCustom)
-                .Select(kv => kv.Value.Id)
-                .DefaultIfEmpty()
-                .Max();
-
             foreach (var s in selected)
             {
-                new_constraints.Add(++seedId, s.Constraint);
+                new_constraints.Add(s.Constraint.Id, s.Constraint);
             }
 
             var new_data = new DbData

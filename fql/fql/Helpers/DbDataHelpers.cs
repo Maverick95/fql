@@ -4,6 +4,30 @@ namespace SqlHelper.Helpers
 {
     public static class DbDataHelpers
     {
+        public static DbData ReseedConstraints(DbData data, IUniqueIdProvider provider)
+        {
+            var reseeded = data.Constraints
+                .Select(kv => kv.Value)
+                .Select(constraint => new Constraint
+                {
+                    Id = provider.Next(),
+                    IsCustom = constraint.IsCustom,
+                    TargetTableId = constraint.TargetTableId,
+                    SourceTableId = constraint.SourceTableId,
+                    Columns = constraint.Columns,
+                })
+                .ToDictionary(constraint => constraint.Id, constraint => constraint);
+
+            var newData = new DbData
+            {
+                Tables = data.Tables,
+                Columns = data.Columns,
+                Constraints = new SortedDictionary<long, Constraint>(reseeded),
+            };
+
+            return newData;
+        }
+
         public static DbData TryMergeDbDataCustomConstraints(DbData dataFrom, DbData dataTo, IUniqueIdProvider uniqueIdProvider)
         {
             // Transform dataFrom custom constraints
