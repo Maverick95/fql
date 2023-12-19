@@ -197,9 +197,18 @@ namespace SqlHelper
                 return;
             }
 
-            var path = paths.Count() == 1 ?
-                paths.First() :
-                pathUserInterface.Choose(paths);
+            ResultRouteTree path = null;
+
+            if (paths.Count() is 1)
+            {
+                Context.Stream.WriteLine("Path selected!");
+                Context.Stream.Padding();
+                path = paths.First();
+            }
+            else
+            {
+                path = pathUserInterface.Choose(paths);
+            }
 
             var output = sqlQueryFactory.Generate(data, path, parameters);
             outputHandler.Handle(output);
